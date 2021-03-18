@@ -14,6 +14,7 @@ version=1.0.0
 ##################################
 cores.path   = {runtime.platform.path}/cores
 system.path  = {runtime.platform.path}/system
+tools.path   = {runtime.platform.path}/tools
 ambiq.path   = {runtime.platform.path}/system/ambiq
 cmsis.path   = {runtime.platform.path}/system/CMSIS/5.7.0
 variant.path = {build.variant.path}
@@ -108,6 +109,7 @@ compiler.axf2hex.flags = {compiler.axf2hex.extra_flags} {compiler.axf2hex.extra_
 ##################################
 compiler.path        = {runtime.tools.arm-none-eabi-gcc-9-2020-q4-update.path}/bin/
 compiler.prefix      = arm-none-eabi-
+compiler.cpp.cmd     = {compiler.prefix}cpp
 compiler.gcc.cmd     = {compiler.prefix}gcc
 compiler.gxx.cmd     = {compiler.prefix}g++
 compiler.ar.cmd      = {compiler.prefix}ar
@@ -135,9 +137,23 @@ recipe.objcopy.bin.pattern = "{compiler.path}{compiler.objcopy.cmd}" {compiler.a
 
 recipe.objcopy.hex.pattern = "{compiler.path}{compiler.objcopy.cmd}" {compiler.axf2hex.flags} "{build.path}/{build.project_name}.axf" "{build.path}/{build.project_name}.hex"
 
+recipe.hooks.objcopy.postobjcopy.1.pattern = "{compiler.path}{compiler.cpp.cmd}" -E -P -DOUTPUT_FILE="{build.path}/{build.project_name}.bin" "{tools.path}/loadscript" -o "{build.path}/loadscript"
+
 recipe.size.pattern    = "{compiler.path}{compiler.size.cmd}" -A "{build.path}/{build.project_name}.axf"
 recipe.size.regex      = \.text\s+([0-9]+).*
 recipe.size.regex.data = ^(?:\.data|\.bss)\s+([0-9]+).*
 
 recipe.output.tmp_file  = {build.project_name}.{build.export_format}
 recipe.output.save_file = {build.project_name}.{build.variant}.{build.export_format}
+
+
+tools.jlink.cmd=jlink
+tools.jlink.cmd.windows=jlink.exe
+
+tools.jlink.upload.params.verbose=
+tools.jlink.upload.params.quiet=
+tools.jlink.upload.pattern="{cmd}" -device {build.device} "{build.path}/loadscript"
+
+tools.jlink.program.params.verbose=
+tools.jlink.program.params.quiet=
+tools.jlink.program.pattern="{cmd}" -device {build.device} "{build.path}/loadscript"
