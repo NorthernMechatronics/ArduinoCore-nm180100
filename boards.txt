@@ -1,0 +1,13 @@
+nm180100evb.name=NM180100 Evaluation Board
+nm180100evb.build.arch=apollo3
+nm180100evb.build.mcu=cortex-m4
+nm180100evb.build.fpu=fpv4-sp-d16
+nm180100evb.build.fabi=hard
+nm180100evb.build.f_cpu=48000000L
+nm180100evb.build.board=NM180100EVB
+nm180100evb.build.variant=NM180100EVB
+nm180100evb.build.core=arduino
+nm180100evb.build.defines=
+nm180100evb.build.includes=
+nm180100evb.build.libs=
+nm180100evb.build.ldscript={runtime.platform.path}/variants/nm180100evb/AMA3B1KK.ld
