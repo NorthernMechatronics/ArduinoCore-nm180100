@@ -4,14 +4,18 @@
 extern "C" {
 #endif
 
+#include "am_util_delay.h"
+
 unsigned long millis(void)
 {
-return 0;
+  am_util_delay_ms(1);
+  return 0;
 }
 
 unsigned long micros( void )
 {
-return 0;
+  am_util_delay_ms(1);
+  return 0;
 }
 
 
@@ -22,16 +26,7 @@ void delay( unsigned long ms )
     return;
   }
 
-  uint32_t start = micros();
-
-  while (ms > 0)
-  {
-    while (ms > 0 && (micros() - start) >= 1000)
-    {
-      ms--;
-      start += 1000;
-    }
-  }
+  am_util_delay_ms(ms);
 }
 
 
