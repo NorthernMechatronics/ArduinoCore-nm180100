@@ -46,6 +46,8 @@ void init (void)
 
     am_hal_sysctrl_fpu_enable();
     am_hal_sysctrl_fpu_stacking_enable(true);
+
+    am_hal_interrupt_master_enable();
 }
 
 /*
