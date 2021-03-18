@@ -25,7 +25,7 @@ variant.path = {build.variant.path}
 ##################################
 defines.arduino = -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_MBED -DARDUINO_ARCH_{build.arch}
 defines.variant = {build.defines}
-defines.extra   = -DAM_PART_APOLLO3 -DAM_PACKAGE_BGA
+defines.extra   = -DAM_PART_APOLLO3 -DAM_PACKAGE_BGA -DPART_apollo3
 defines.all     = {defines.variant} {defines.arduino} {defines.extra} -DCORDIO_ZERO_COPY_HCI
 
 defines.preproc = {defines.all}
@@ -51,7 +51,7 @@ includes.all     = {includes.core} {includes.variant} {includes.ambiq} {includes
 #
 ##################################
 libs.core    = -Wl,--whole-archive "{archive_file_path}" -Wl,--no-whole-archive
-libs.variant = {build.libs}
+libs.variant = -Wl,-L{cmsis.path}/CMSIS/Lib -Wl,-L{variant.path} -Wl,--whole-archive {build.libs} -Wl,--no-whole-archive
 libs.ambiq   = -Wl,-L{ambiq.path}/lib -Wl,--whole-archive -lam_hal -Wl,-lam_utils -Wl,--no-whole-archive
 libs.all     = {libs.core} {libs.variant} {libs.ambiq}
 
@@ -135,9 +135,9 @@ recipe.objcopy.bin.pattern = "{compiler.path}{compiler.objcopy.cmd}" {compiler.a
 
 recipe.objcopy.hex.pattern = "{compiler.path}{compiler.objcopy.cmd}" {compiler.axf2hex.flags} "{build.path}/{build.project_name}.axf" "{build.path}/{build.project_name}.hex"
 
-recipe.size.pattern   = "{compiler.path}{compiler.size.cmd}" -A "{build.path}/{build.project_name}.axf"
+recipe.size.pattern    = "{compiler.path}{compiler.size.cmd}" -A "{build.path}/{build.project_name}.axf"
+recipe.size.regex      = \.text\s+([0-9]+).*
+recipe.size.regex.data = ^(?:\.data|\.bss)\s+([0-9]+).*
 
-recipe.size.regex=\.text\s+([0-9]+).*
-recipe.size.regex.data=^(?:\.data|\.bss)\s+([0-9]+).*
-recipe.output.tmp_file={build.project_name}.{build.export_format}
-recipe.output.save_file={build.project_name}.{build.export_format}
+recipe.output.tmp_file  = {build.project_name}.{build.export_format}
+recipe.output.save_file = {build.project_name}.{build.variant}.{build.export_format}
