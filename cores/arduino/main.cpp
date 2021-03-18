@@ -13,6 +13,15 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include <am_mcu_apollo.h>
+
+#ifdef __cplusplus
+}
+#endif
 
 #define ARDUINO_MAIN
 #include "Arduino.h"
@@ -22,6 +31,23 @@
 void initVariant() __attribute__((weak));
 void initVariant() { }
 
+void init (void)
+{
+    //
+    // Set the clock frequency.
+    //
+    am_hal_clkgen_control(AM_HAL_CLKGEN_CONTROL_SYSCLK_MAX, 0);
+
+    //
+    // Set the default cache configuration
+    //
+    am_hal_cachectrl_config(&am_hal_cachectrl_defaults);
+    am_hal_cachectrl_enable();
+
+    am_hal_sysctrl_fpu_enable();
+    am_hal_sysctrl_fpu_stacking_enable(true);
+}
+
 /*
  * \brief Main entry point of Arduino application
  */
@@ -30,11 +56,8 @@ int main( void )
 	// Initialize watchdog
 	//watchdogSetup();
 
-	//init();
-
+	init();
 	initVariant();
-
-	//delay(1);
 
 #if defined(USBCON)
 	//USBDevice.attach();

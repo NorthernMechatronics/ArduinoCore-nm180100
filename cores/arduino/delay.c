@@ -8,13 +8,11 @@ extern "C" {
 
 unsigned long millis(void)
 {
-  am_util_delay_ms(1);
   return 0;
 }
 
 unsigned long micros( void )
 {
-  am_util_delay_ms(1);
   return 0;
 }
 
@@ -27,6 +25,16 @@ void delay( unsigned long ms )
   }
 
   am_util_delay_ms(ms);
+}
+
+void delayMicroseconds( unsigned int us )
+{
+  if (us == 0)
+  {
+    return;
+  }
+
+  am_util_delay_us(us);
 }
 
 
