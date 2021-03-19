@@ -34,6 +34,8 @@ extern "C" {
 #define ARDUINO_MAIN
 #include "Common.h"
 
+static am_hal_gpio_pincfg_t gpio_pincfg[AM_HAL_GPIO_MAX_PADS] = { 0 };
+
 void pinMode(pin_size_t pin, PinMode mode)
 {
     am_hal_gpio_pincfg_t pincfg;
@@ -51,7 +53,8 @@ void pinMode(pin_size_t pin, PinMode mode)
     default:
         pincfg = g_AM_HAL_GPIO_DISABLE;
     }
-
+    
+    gpio_pincfg[pin] = pincfg;
     am_hal_gpio_pinconfig(pin, pincfg);
 }
 
@@ -78,4 +81,75 @@ PinStatus digitalRead(pin_size_t pin)
         return HIGH;
 
 	return LOW;
+}
+
+static uint8_t configInterrupt(pin_size_t interruptNumber, PinStatus mode)
+{
+    am_hal_gpio_intdir_e intdir;
+
+    switch (mode)
+    {
+    case FALLING:
+        intdir = AM_HAL_GPIO_PIN_INTDIR_HI2LO;
+        break;
+
+    case RISING:
+        intdir = AM_HAL_GPIO_PIN_INTDIR_LO2HI;
+        break;
+
+    case CHANGE:
+        intdir = AM_HAL_GPIO_PIN_INTDIR_BOTH;
+        break;
+
+    case LOW:
+    case HIGH:
+    default:
+        intdir = AM_HAL_GPIO_PIN_INTDIR_NONE;
+        break;
+    }
+
+    gpio_pincfg[interruptNumber].eIntDir = intdir;
+    am_hal_gpio_pinconfig(interruptNumber, gpio_pincfg[interruptNumber]);
+
+    if (intdir == AM_HAL_GPIO_PIN_INTDIR_NONE)
+    {
+        am_hal_gpio_interrupt_disable(AM_HAL_GPIO_BIT(interruptNumber));
+        am_hal_gpio_interrupt_clear(AM_HAL_GPIO_BIT(interruptNumber));
+
+        return 0;
+    }
+    else
+    {
+        am_hal_gpio_interrupt_clear(AM_HAL_GPIO_BIT(interruptNumber));
+        am_hal_gpio_interrupt_enable(AM_HAL_GPIO_BIT(interruptNumber));
+
+        NVIC_EnableIRQ(GPIO_IRQn);
+
+        return 1;
+    }
+
+    return 0;
+}
+
+void attachInterrupt(pin_size_t interruptNumber, voidFuncPtr callback, PinStatus mode)
+{
+    if (configInterrupt(interruptNumber, mode))
+    {
+        am_hal_gpio_interrupt_register(interruptNumber, callback);
+    }
+}
+
+void attachInterruptParam(pin_size_t interruptNumber, voidFuncPtrParam callback, PinStatus mode, void* param)
+{
+    if (configInterrupt(interruptNumber, mode))
+    {
+        am_hal_gpio_interrupt_register_adv(interruptNumber, callback, param);
+    }
+}
+
+void detachInterrupt(pin_size_t interruptNumber)
+{
+    am_hal_gpio_interrupt_disable(AM_HAL_GPIO_BIT(interruptNumber));
+    am_hal_gpio_interrupt_clear(AM_HAL_GPIO_BIT(interruptNumber));
+    am_hal_gpio_interrupt_register(interruptNumber, NULL);
 }
