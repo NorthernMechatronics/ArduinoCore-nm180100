@@ -29,13 +29,14 @@ public:
 	int read(void);
 	void flush(void);
 	size_t write(uint8_t);
+	size_t write(const uint8_t* buffer, size_t size);
 	operator bool(void)
 	{
 		return true;
 	}
 
 private:
-	void init(void);
+	void uart_init(void);
 	
 	uint8_t tx_buffer[UART_BUFFER_SIZE];
 	uint8_t rx_buffer[UART_BUFFER_SIZE];
