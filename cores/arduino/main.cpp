@@ -25,11 +25,72 @@ extern "C" {
 
 #define ARDUINO_MAIN
 #include "Arduino.h"
+#include "system_config.h"
 
 // Weak empty variant initialization function.
 // May be redefined by variant files.
 void initVariant() __attribute__((weak));
 void initVariant() { }
+
+void system_timer_init(void)
+{
+    // microsecond counter
+    am_hal_ctimer_clear(
+        SYSTEM_TIMER_SRC_US_NUM,
+        SYSTEM_TIMER_SRC_US_SEG);
+    
+    am_hal_ctimer_config_single(
+        SYSTEM_TIMER_SRC_US_NUM,
+        SYSTEM_TIMER_SRC_US_SEG,
+        (AM_HAL_CTIMER_FN_REPEAT |
+         AM_HAL_CTIMER_HFRC_12MHZ));
+    
+    am_hal_ctimer_period_set(
+        SYSTEM_TIMER_SRC_US_NUM,
+        SYSTEM_TIMER_SRC_US_SEG, 12, 1);
+    
+    am_hal_ctimer_start(
+        SYSTEM_TIMER_SRC_US_NUM,
+        SYSTEM_TIMER_SRC_US_SEG);
+
+    am_hal_stimer_config(AM_HAL_STIMER_CFG_CLEAR | AM_HAL_STIMER_CFG_FREEZE);
+    am_hal_stimer_config(AM_HAL_STIMER_HFRC_CTIMER0A |
+        AM_HAL_STIMER_CFG_RUN);
+
+    // trigger source for millisecond counter
+    am_hal_ctimer_clear(
+        SYSTEM_TIMER_SRC_MS_NUM,
+        SYSTEM_TIMER_SRC_MS_SEG);
+    
+    am_hal_ctimer_config_single(
+        SYSTEM_TIMER_SRC_MS_NUM,
+        SYSTEM_TIMER_SRC_MS_SEG,
+        (AM_HAL_CTIMER_FN_REPEAT |
+         AM_HAL_CTIMER_HFRC_12KHZ));
+    
+    am_hal_ctimer_period_set(
+        SYSTEM_TIMER_SRC_MS_NUM,
+        SYSTEM_TIMER_SRC_MS_SEG, 12, 1);
+    
+    am_hal_ctimer_start(
+        SYSTEM_TIMER_SRC_MS_NUM,
+        SYSTEM_TIMER_SRC_MS_SEG);
+
+    // millisecond counter
+    am_hal_ctimer_clear(
+        SYSTEM_TIMER_COUNTER_MS_NUM,
+        SYSTEM_TIMER_COUNTER_MS_SEG);
+    
+    am_hal_ctimer_config_single(
+        SYSTEM_TIMER_COUNTER_MS_NUM,
+        SYSTEM_TIMER_COUNTER_MS_SEG,
+        (AM_HAL_CTIMER_FN_REPEAT |
+         _VAL2FLD(CTIMER_CTRL0_TMRA0CLK, 0x16)));
+    
+    am_hal_ctimer_start(
+        SYSTEM_TIMER_COUNTER_MS_NUM,
+        SYSTEM_TIMER_COUNTER_MS_SEG);
+}
 
 void init (void)
 {
@@ -48,6 +109,8 @@ void init (void)
     am_hal_sysctrl_fpu_stacking_enable(true);
 
     am_hal_interrupt_master_enable();
+
+    system_timer_init();
 }
 
 /*
@@ -55,23 +118,23 @@ void init (void)
  */
 int main( void )
 {
-	// Initialize watchdog
-	//watchdogSetup();
+    // Initialize watchdog
+    //watchdogSetup();
 
-	init();
-	initVariant();
+    init();
+    initVariant();
 
 #if defined(USBCON)
-	//USBDevice.attach();
+    //USBDevice.attach();
 #endif
 
-	setup();
+    setup();
 
-	for (;;)
-	{
-		loop();
-		//if (serialEventRun) serialEventRun();
-	}
+    for (;;)
+    {
+        loop();
+        //if (serialEventRun) serialEventRun();
+    }
 
-	return 0;
+    return 0;
 }
