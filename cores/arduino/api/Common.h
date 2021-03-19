@@ -57,6 +57,8 @@ typedef void (*voidFuncPtr)(void);
 typedef void (*voidFuncPtrParam)(void*);
 
 // interrupts() / noInterrupts() must be defined by the core
+void interrupts();
+void noInterrupts();
 
 #define lowByte(w) ((uint8_t) ((w) & 0xff))
 #define highByte(w) ((uint8_t) ((w) >> 8))

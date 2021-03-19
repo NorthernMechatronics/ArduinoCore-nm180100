@@ -38,3 +38,13 @@ void am_gpio_isr(void)
 	am_hal_gpio_interrupt_clear(status);
 	am_hal_gpio_interrupt_service(status);
 }
+
+void interrupts()
+{
+	am_hal_interrupt_master_enable();
+}
+
+void noInterrupts()
+{
+	am_hal_interrupt_master_disable();
+}
