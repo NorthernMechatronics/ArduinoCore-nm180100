@@ -64,6 +64,7 @@ SRC += itoa.c
 SRC += pinmap.c
 SRC += startup_gcc.c
 SRC += wiring_digital.c
+SRC += wiring_shift.c
 SRC += main.cpp
 #SRC += Uart.cpp
 SRC += HardwareSerial.cpp
