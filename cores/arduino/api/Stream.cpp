@@ -29,6 +29,16 @@
 
 using namespace arduino;
 
+Stream::Stream()
+  : _timeout(0), _startMillis(0)
+{
+
+}
+
+Stream::~Stream()
+{
+}
+
 // private method to read stream with timeout
 int Stream::timedRead()
 {

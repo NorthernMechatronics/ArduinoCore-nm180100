@@ -78,7 +78,9 @@ PinStatus digitalRead(pin_size_t pin)
     am_hal_gpio_state_read(pin, AM_HAL_GPIO_INPUT_READ, &state);
     
     if (state)
+    {
         return HIGH;
+    }
 
 	return LOW;
 }

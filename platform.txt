@@ -94,7 +94,7 @@ compiler.c.flags       = {compiler.c.extra_flags} -MMD -c -mthumb -mcpu={build.m
 
 compiler.cxx.flags     = {compiler.cxx.extra_flags} -MMD -c -mthumb -mcpu={build.mcu} -mfpu={build.fpu} -mfloat-abi={build.fabi}
 
-compiler.ld.flags      = {compiler.ld.extra_flags} --specs=nano.specs --specs=nosys.specs -lsupc++ -lstdc++ -lm -mthumb -mcpu={build.mcu} -mfpu={build.fpu} -mfloat-abi={build.fabi} -Wl,--gc-sections -Wl,--wrap,_calloc_r -Wl,--wrap,_memalign_r -Wl,--wrap,atexit -Wl,--wrap,exit -Wl,--wrap,fprintf -Wl,--wrap,printf -Wl,--wrap,snprintf -Wl,--wrap,sprintf -Wl,--wrap,vfprintf -Wl,--wrap,vprintf -Wl,--wrap,vsnprintf -Wl,--wrap,vsprintf -Wl,-n
+compiler.ld.flags      = {compiler.ld.extra_flags} --specs=nano.specs --specs=nosys.specs -lsupc++ -lstdc++ -lm -mthumb -mcpu={build.mcu} -mfpu={build.fpu} -mfloat-abi={build.fabi} -Wl,--gc-sections -Wl,--wrap,_memalign_r -Wl,--wrap,atexit -Wl,--wrap,exit -Wl,--wrap,fprintf -Wl,--wrap,printf -Wl,--wrap,snprintf -Wl,--wrap,vfprintf -Wl,--wrap,vprintf -Wl,--wrap,vsnprintf -Wl,--wrap,vsprintf -Wl,-n
 
 compiler.ar.flags      = rcsP {compiler.ar.extra_flags} {compiler.ar.extra_flags}
 

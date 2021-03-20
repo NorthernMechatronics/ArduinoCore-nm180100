@@ -31,6 +31,8 @@ extern "C" {
 }
 #endif
 
+void *uart_handle[AM_REG_UART_NUM_MODULES] = { 0 };
+
 void am_gpio_isr(void)
 {
 	uint64_t status;
@@ -47,4 +49,30 @@ void interrupts()
 void noInterrupts()
 {
 	am_hal_interrupt_master_disable();
+}
+
+void am_uart_isr(void)
+{
+    uint32_t ui32Status;
+    uint32_t ui32Idle;
+
+    if (uart_handle[0])
+    {
+        am_hal_uart_interrupt_status_get(uart_handle[0], &ui32Status, true);
+        am_hal_uart_interrupt_clear(uart_handle[0], ui32Status);
+        am_hal_uart_interrupt_service(uart_handle[0], ui32Status, &ui32Idle);
+    }
+}
+
+void am_uart1_isr(void)
+{
+    uint32_t ui32Status;
+    uint32_t ui32Idle;
+
+    if (uart_handle[1])
+    {
+        am_hal_uart_interrupt_status_get(uart_handle[1], &ui32Status, true);
+        am_hal_uart_interrupt_clear(uart_handle[1], ui32Status);
+        am_hal_uart_interrupt_service(uart_handle[1], ui32Status, &ui32Idle);
+    }
 }

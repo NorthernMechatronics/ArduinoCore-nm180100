@@ -17,6 +17,7 @@
 extern "C" {
 #endif
 
+#include <stdint.h>
 #include <am_mcu_apollo.h>
 
 #ifdef __cplusplus
@@ -133,7 +134,7 @@ int main( void )
     for (;;)
     {
         loop();
-        //if (serialEventRun) serialEventRun();
+        if (serialEventRun) serialEventRun();
     }
 
     return 0;

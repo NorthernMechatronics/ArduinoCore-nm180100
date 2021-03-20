@@ -20,6 +20,7 @@
 
 #include <inttypes.h>
 #include "Stream.h"
+#include "PinNames.h"
 
 namespace arduino {
 
@@ -84,19 +85,43 @@ namespace arduino {
 #define SERIAL_7S2           (SERIAL_STOP_BIT_2 | SERIAL_PARITY_SPACE | SERIAL_DATA_7)
 #define SERIAL_8S2           (SERIAL_STOP_BIT_2 | SERIAL_PARITY_SPACE | SERIAL_DATA_8)
 
+#define UART_BUFFER_SIZE 1024
+
 class HardwareSerial : public Stream
 {
   public:
-    virtual void begin(unsigned long) = 0;
-    virtual void begin(unsigned long baudrate, uint16_t config) = 0;
-    virtual void end() = 0;
-    virtual int available(void) = 0;
-    virtual int peek(void) = 0;
-    virtual int read(void) = 0;
-    virtual void flush(void) = 0;
-    virtual size_t write(uint8_t) = 0;
+    HardwareSerial();
+    HardwareSerial(PinName tx, PinName rx);
+    ~HardwareSerial();
+    void begin(unsigned long);
+    void begin(unsigned long baudrate, uint16_t config);
+    void begin(unsigned long baudrate, uint16_t config, PinName tx, PinName rx);
+    void end();
+    int available(void);
+    int availableForWrite(void);
+    int peek(void);
+    int read(void);
+    void flush(void);
+    size_t write(uint8_t ch);
+    size_t write(const uint8_t *buffer, size_t size);
     using Print::write; // pull in write(str) and write(buf, size) from Print
-    virtual operator bool() = 0;
+    operator bool();
+
+  protected:
+    void *handle;
+    uint8_t txbuffer[UART_BUFFER_SIZE];
+    uint8_t rxbuffer[UART_BUFFER_SIZE];
+
+    PinName txPin;
+    PinName rxPin;
+
+    void initialize(
+            uint32_t baudrate,
+            uint32_t databits,
+            uint32_t parity,
+            uint32_t stopbits,
+            uint32_t flowcontrol);
+    void deinitialize();
 };
 
 // XXX: Are we keeping the serialEvent API?

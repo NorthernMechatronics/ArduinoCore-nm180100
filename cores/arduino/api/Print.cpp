@@ -26,6 +26,15 @@
 using namespace arduino;
 
 // Public Methods //////////////////////////////////////////////////////////////
+Print::Print() : write_error(0)
+{
+
+}
+
+Print::~Print()
+{
+
+}
 
 /* default implementation: may be overridden */
 size_t Print::write(const uint8_t *buffer, size_t size)
