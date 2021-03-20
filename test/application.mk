@@ -53,6 +53,7 @@ endif
 
 SRC += Common.cpp
 SRC += IPAddress.cpp
+SRC += PluggableUSB.cpp
 SRC += Print.cpp
 SRC += Stream.cpp
 SRC += WString.cpp
