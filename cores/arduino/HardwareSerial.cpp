@@ -263,8 +263,8 @@ void HardwareSerial::initialize(
 {
     am_hal_gpio_pincfg_t tx_pincfg, rx_pincfg;
 
-    memset(&tx_pincfg, 0, 4);
-    memset(&rx_pincfg, 0, 4);
+    memset(&tx_pincfg, 0, sizeof(am_hal_gpio_pincfg_t));
+    memset(&rx_pincfg, 0, sizeof(am_hal_gpio_pincfg_t));
 
     tx_pincfg.eDriveStrength = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA;
 
