@@ -16,10 +16,10 @@ typedef enum {
 } PinStatus;
 
 typedef enum {
-  INPUT           = 0x0,
-  OUTPUT          = 0x1,
-  INPUT_PULLUP    = 0x2,
-  INPUT_PULLDOWN  = 0x3,
+  INPUT        = 0x0,
+  OUTPUT       = 0x1,
+  INPUT_PULLUP = 0x2,
+  DISABLE      = 0x3,
 } PinMode;
 
 typedef enum {
@@ -100,6 +100,8 @@ PinStatus digitalRead(pin_size_t pinNumber);
 int analogRead(pin_size_t pinNumber);
 void analogReference(uint8_t mode);
 void analogWrite(pin_size_t pinNumber, int value);
+void analogReadResolution(uint8_t bits);
+void analogWriteResolution(uint8_t bits);
 
 unsigned long millis(void);
 unsigned long micros(void);

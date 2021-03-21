@@ -25,6 +25,7 @@
 #include "am_mcu_apollo.h"
 #include "am_util.h"
 
+#include "system_config.h"
 #include "Common.h"
 #include "pinmap.h"
 #include "PeripheralPins.h"
@@ -33,6 +34,7 @@
 
 static void *adc_handle;
 static am_hal_adc_refsel_e adc_reference = AM_HAL_ADC_REFSEL_INT_2P0;
+static int8_t adc_read_resolution = ADC_MAX_RESOLUTION;
 static volatile uint32_t adc_cnv_complete;
 
 static void* adc_initialize(pin_size_t pinNumber)
@@ -91,24 +93,24 @@ static void adc_uninitialize(void *handle)
 
 static void adc_timer_initialize(void)
 {
-    am_hal_ctimer_config_single(3, AM_HAL_CTIMER_TIMERA,
+    am_hal_ctimer_config_single(ADC_TIMER_NUM, ADC_TIMER_SEG,
             AM_HAL_CTIMER_HFRC_47KHZ |
             AM_HAL_CTIMER_FN_REPEAT |
             AM_HAL_CTIMER_ADC_TRIG);
 
-    am_hal_ctimer_period_set(3, AM_HAL_CTIMER_TIMERA, 3, 1);
+    am_hal_ctimer_period_set(ADC_TIMER_NUM, ADC_TIMER_SEG, 3, 1);
 
     //
     // Start the timer.
     //
-    am_hal_ctimer_start(3, AM_HAL_CTIMER_TIMERA);
+    am_hal_ctimer_start(ADC_TIMER_NUM, ADC_TIMER_SEG);
     am_hal_ctimer_adc_trigger_enable();
 }
 
 static void adc_timer_uninitialize(void)
 {
     am_hal_ctimer_adc_trigger_disable();
-    am_hal_ctimer_stop(3, AM_HAL_CTIMER_TIMERA);
+    am_hal_ctimer_stop(ADC_TIMER_NUM, ADC_TIMER_SEG);
 }
 
 int analogRead(pin_size_t pinNumber)
@@ -127,19 +129,55 @@ int analogRead(pin_size_t pinNumber)
 
     uint32_t sample_count = 1;
     uint32_t sample_code = 0;
+    uint32_t scaled_code = 0;
     am_hal_adc_sample_t sample;
 
     am_hal_adc_samples_read(adc_handle, false, NULL, &sample_count, &sample);
     sample_code = AM_HAL_ADC_FIFO_FULL_SAMPLE(sample.ui32Sample);
-
     adc_uninitialize(adc_handle);
 
-    return sample_code;
+    scaled_code = sample_code;
+    int8_t dres = adc_read_resolution - ADC_MAX_RESOLUTION;
+
+    if (dres > 0)
+    {
+        scaled_code <<= dres;
+    }
+    else if (dres < 0)
+    {
+        scaled_code >>= -dres;
+    }
+
+    return scaled_code;
+}
+
+void analogWrite(pin_size_t pinNumber, int value)
+{
+
 }
 
 void analogReference(am_hal_adc_refsel_e ref)
 {
     adc_reference = ref;
+}
+
+void analogReadResolution(uint8_t bits)
+{
+    if (bits > ADC_MAX_RESOLUTION)
+    {
+        bits = ADC_MAX_RESOLUTION;
+    }
+    if (bits < ADC_MIN_RESOLUTION)
+    {
+        bits = ADC_MIN_RESOLUTION;
+    }
+
+    adc_read_resolution = bits;
+}
+
+void analogWriteResolution(uint8_t bits)
+{
+
 }
 
 void am_adc_isr(void)
