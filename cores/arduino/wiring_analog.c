@@ -32,6 +32,7 @@
 #define ARDUINO_MAIN
 
 static void *adc_handle;
+static am_hal_adc_refsel_e adc_reference = AM_HAL_ADC_REFSEL_INT_2P0;
 static volatile uint32_t adc_cnv_complete;
 
 static void* adc_initialize(pin_size_t pinNumber)
@@ -53,7 +54,7 @@ static void* adc_initialize(pin_size_t pinNumber)
     adc_config.eClock     = AM_HAL_ADC_CLKSEL_HFRC_DIV2;
     adc_config.ePolarity  = AM_HAL_ADC_TRIGPOL_RISING;
     adc_config.eTrigger   = AM_HAL_ADC_TRIGSEL_SOFTWARE;
-    adc_config.eReference = AM_HAL_ADC_REFSEL_INT_2P0;
+    adc_config.eReference = adc_reference;
     adc_config.eClockMode = AM_HAL_ADC_CLKMODE_LOW_LATENCY;
     adc_config.ePowerMode = AM_HAL_ADC_LPMODE0;
     adc_config.eRepeat    = AM_HAL_ADC_REPEATING_SCAN;
@@ -134,6 +135,11 @@ int analogRead(pin_size_t pinNumber)
     adc_uninitialize(adc_handle);
 
     return sample_code;
+}
+
+void analogReference(am_hal_adc_refsel_e ref)
+{
+    adc_reference = ref;
 }
 
 void am_adc_isr(void)
