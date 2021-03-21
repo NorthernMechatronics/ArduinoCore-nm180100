@@ -69,21 +69,10 @@ static void* adc_initialize(pin_size_t pinNumber)
     am_hal_adc_configure(handle, &adc_config);
     am_hal_adc_disable(handle);
     am_hal_adc_configure_slot(handle, 0, &adc_slot_config);
-
-    adc_slot_config.bEnabled = false;
-    am_hal_adc_configure_slot(handle, 1, &adc_slot_config);
-    am_hal_adc_configure_slot(handle, 2, &adc_slot_config);
-    am_hal_adc_configure_slot(handle, 3, &adc_slot_config);
-    am_hal_adc_configure_slot(handle, 4, &adc_slot_config);
-    am_hal_adc_configure_slot(handle, 5, &adc_slot_config);
-    am_hal_adc_configure_slot(handle, 6, &adc_slot_config);
-    am_hal_adc_configure_slot(handle, 7, &adc_slot_config);
-
     am_hal_adc_enable(handle);
-    am_hal_adc_interrupt_enable(handle, AM_HAL_ADC_INT_CNVCMP | AM_HAL_ADC_INT_SCNCMP);
-    NVIC_EnableIRQ(ADC_IRQn);
-    am_hal_interrupt_master_enable();
 
+    am_hal_adc_interrupt_enable(handle, AM_HAL_ADC_INT_CNVCMP);
+    NVIC_EnableIRQ(ADC_IRQn);
 
     adc_cnv_complete = 0;
 
@@ -93,8 +82,7 @@ static void* adc_initialize(pin_size_t pinNumber)
 static void adc_uninitialize(void *handle)
 {
     NVIC_DisableIRQ(ADC_IRQn);
-    am_hal_adc_interrupt_disable(handle, AM_HAL_ADC_INT_CNVCMP | AM_HAL_ADC_INT_SCNCMP);
-    am_hal_adc_interrupt_clear(handle, AM_HAL_ADC_INT_CNVCMP | AM_HAL_ADC_INT_SCNCMP);
+    am_hal_adc_interrupt_disable(handle, AM_HAL_ADC_INT_CNVCMP);
     am_hal_adc_disable(handle);
     am_hal_pwrctrl_periph_disable(AM_HAL_PWRCTRL_PERIPH_ADC);
     am_hal_adc_deinitialize(handle);
