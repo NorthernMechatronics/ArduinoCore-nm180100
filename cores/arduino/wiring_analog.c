@@ -158,7 +158,19 @@ void analogWrite(pin_size_t pinNumber, int value)
 
 void analogReference(am_hal_adc_refsel_e ref)
 {
-    adc_reference = ref;
+    switch(ref)
+    {
+    case AM_HAL_ADC_REFSEL_INT_2P0:
+    case AM_HAL_ADC_REFSEL_INT_1P5:
+        adc_reference = ref;
+        break;
+
+    case AM_HAL_ADC_REFSEL_EXT_2P0:
+    case AM_HAL_ADC_REFSEL_EXT_1P5:
+    default:
+        adc_reference = AM_HAL_ADC_REFSEL_INT_2P0;
+        break;
+    }
 }
 
 void analogReadResolution(uint8_t bits)
