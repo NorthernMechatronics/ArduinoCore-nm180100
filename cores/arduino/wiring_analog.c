@@ -118,6 +118,7 @@ int analogRead(pin_size_t pinNumber)
     adc_timer_initialize();
     while (adc_cnv_complete < 4)
     {
+        // FIXME: change to yield for multi-threaded implementation.
         am_hal_sysctrl_sleep(AM_HAL_SYSCTRL_SLEEP_DEEP);
     }
     adc_timer_uninitialize();
