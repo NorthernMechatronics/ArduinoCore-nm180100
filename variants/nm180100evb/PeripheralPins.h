@@ -14,4 +14,6 @@ extern const PinMap PinMap_SPI_SSEL[];
 extern const PinMap PinMap_I2C_SDA[];
 extern const PinMap PinMap_I2C_SCL[];
 
+extern const PinMap PinMap_ADC[];
+
 #endif /* PERIPHERALPINS_H */

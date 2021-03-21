@@ -14,13 +14,12 @@ void loop()
     digitalToggle(10);
     Serial.println(counter++);
 
-    incoming = Serial.peek();
-    if (incoming > 0)
+    incoming = Serial.read();
+    if (incoming == 's')
     {
+        int voltage_code = analogRead(GPIO29);
         // say what you got:
-        Serial.print("I received: ");
-        Serial.println(incoming, DEC);
-
-        Serial.read();
+        Serial.print("Analog Code: ");
+        Serial.println(voltage_code, DEC);
     }
 }

@@ -64,6 +64,7 @@ SRC += interrupts.c
 SRC += itoa.c
 SRC += pinmap.c
 SRC += startup_gcc.c
+SRC += wiring_analog.c
 SRC += wiring_digital.c
 SRC += wiring_shift.c
 SRC += main.cpp
