@@ -28,6 +28,7 @@
 #include "system_config.h"
 #include "Common.h"
 #include "pinmap.h"
+#include "timermap.h"
 #include "PeripheralPins.h"
 
 #define ARDUINO_MAIN
@@ -35,6 +36,8 @@
 static void *adc_handle;
 static am_hal_adc_refsel_e adc_reference = AM_HAL_ADC_REFSEL_INT_2P0;
 static int8_t adc_read_resolution = ADC_MAX_RESOLUTION;
+static int8_t pwm_write_resolution = PWM_MAX_RESOLUTION;
+
 static volatile uint32_t adc_cnv_complete;
 
 static void* adc_initialize(pin_size_t pinNumber)
@@ -153,7 +156,57 @@ int analogRead(pin_size_t pinNumber)
 
 void analogWrite(pin_size_t pinNumber, int value)
 {
+    if (value == 0)
+    {
+        pinMode(pinNumber, OUTPUT);
+        digitalWrite(pinNumber, LOW);
+        return;
+    }
+    else if (value == 255)
+    {
+        pinMode(pinNumber, OUTPUT);
+        digitalWrite(pinNumber, HIGH);
+        return;
+    }
 
+    uint32_t seg;
+    uint32_t num;
+    uint32_t reg;
+
+    timermap_ct_available(pinNumber, &seg, &num, &reg);
+
+    switch(seg)
+    {
+    case 0:
+        seg = AM_HAL_CTIMER_TIMERA;
+        break;
+    case 1:
+        seg = AM_HAL_CTIMER_TIMERB;
+        break;
+    }
+
+    seg = AM_HAL_CTIMER_TIMERB;
+    num = 2;
+    reg = 1;
+
+    am_hal_ctimer_output_config(num, seg, pinNumber,
+            AM_HAL_CTIMER_OUTPUT_NORMAL,
+            AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA);
+
+    am_hal_ctimer_config_single(
+            num, seg,
+            (AM_HAL_CTIMER_FN_PWM_REPEAT | AM_HAL_CTIMER_LFRC_32HZ));
+
+    if (reg == 0)
+    {
+        am_hal_ctimer_period_set(num, seg, 32, 31);
+    }
+    else
+    {
+        am_hal_ctimer_aux_period_set(num, seg, 32, 1);
+    }
+
+    am_hal_ctimer_start(num, seg);
 }
 
 void analogReference(am_hal_adc_refsel_e ref)

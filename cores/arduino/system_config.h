@@ -15,4 +15,8 @@
 
 #define ADC_MAX_RESOLUTION  14
 #define ADC_MIN_RESOLUTION   8
+
+#define PWM_MAX_RESOLUTION  16
+#define PWM_MIN_RESOLUTION   8
+
 #endif // SYSTEM_CONFIG_H

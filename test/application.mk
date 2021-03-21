@@ -63,6 +63,7 @@ SRC += dtostrf.c
 SRC += interrupts.c
 SRC += itoa.c
 SRC += pinmap.c
+SRC += timermap.c
 SRC += startup_gcc.c
 SRC += wiring_analog.c
 SRC += wiring_digital.c

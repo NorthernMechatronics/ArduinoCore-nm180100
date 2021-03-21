@@ -1,10 +1,12 @@
 #include <Arduino.h>
 
 unsigned int counter = 0;
+int brightness = 10;
 int incoming = 0;
 void setup()
 {
     pinMode(LED4, OUTPUT);
+    analogWrite(GPIO30, brightness);
     Serial.begin(115200);
 }
 
@@ -15,11 +17,24 @@ void loop()
     Serial.println(counter++);
 
     incoming = Serial.read();
-    if (incoming == 's')
+    switch(incoming)
+    {
+    case 's':
     {
         int voltage_code = analogRead(GPIO29);
         // say what you got:
         Serial.print("Analog Code: ");
         Serial.println(voltage_code, DEC);
+    }
+        break;
+
+    case '+':
+        brightness += 20;
+        if (brightness > 255)
+        {
+            brightness = 0;
+        }
+        analogWrite(GPIO30, brightness);
+        break;
     }
 }

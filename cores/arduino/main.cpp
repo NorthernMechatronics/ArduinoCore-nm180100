@@ -26,6 +26,7 @@ extern "C" {
 
 #define ARDUINO_MAIN
 #include "Arduino.h"
+#include "timermap.h"
 #include "system_config.h"
 
 // Weak empty variant initialization function.
@@ -90,6 +91,11 @@ void system_timer_init(void)
     am_hal_ctimer_start(
         SYSTEM_TIMER_COUNTER_MS_NUM,
         SYSTEM_TIMER_COUNTER_MS_SEG);
+
+    timermap_ct_assign(0, 0, 0xFF);
+    timermap_ct_assign(1, 0, 0xFF);
+    timermap_ct_assign(0, 1, 0xFF);
+    timermap_ct_assign(0, 3, 0xFF);
 }
 
 void init (void)
@@ -98,6 +104,7 @@ void init (void)
     // Set the clock frequency.
     //
     am_hal_clkgen_control(AM_HAL_CLKGEN_CONTROL_SYSCLK_MAX, 0);
+//    am_hal_clkgen_control(AM_HAL_CLKGEN_CONTROL_LFRC_START, 0);
 
     //
     // Set the default cache configuration
@@ -110,6 +117,7 @@ void init (void)
 
     am_hal_interrupt_master_enable();
 
+    timermap_ct_init();
     system_timer_init();
 }
 
