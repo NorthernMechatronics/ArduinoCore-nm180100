@@ -4,14 +4,14 @@ unsigned int counter = 0;
 int incoming = 0;
 void setup()
 {
-    pinMode(10, OUTPUT);
+    pinMode(LED4, OUTPUT);
     Serial.begin(115200);
 }
 
 void loop()
 {
     delay(1000);
-    digitalToggle(10);
+    digitalToggle(LED4);
     Serial.println(counter++);
 
     incoming = Serial.read();
