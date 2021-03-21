@@ -31,7 +31,6 @@ extern "C" {
 // Weak empty variant initialization function.
 // May be redefined by variant files.
 void initVariant() __attribute__((weak));
-void initVariant() { }
 
 void system_timer_init(void)
 {

@@ -73,6 +73,7 @@ SRC += HardwareSerial.cpp
 
 SRC += PeripheralPins.c
 SRC += Peripherals.cpp
+SRC += variant.cpp
 
 SRC += test.cpp
 
