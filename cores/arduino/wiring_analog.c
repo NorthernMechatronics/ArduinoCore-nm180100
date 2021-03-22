@@ -247,7 +247,7 @@ void analogWrite(pin_size_t pinNumber, int value)
     {
         pwmWrite(pinNumber,
                  seg ? AM_HAL_CTIMER_TIMERB : AM_HAL_CTIMER_TIMERA,
-                 num, reg, 255, value, AM_HAL_CTIMER_HFRC_12KHZ);
+                 num, reg, 255, value, AM_HAL_CTIMER_HFRC_187_5KHZ);
     }
 }
 
