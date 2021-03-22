@@ -5,6 +5,10 @@ int brightness = 100;
 int incoming = 0;
 void setup()
 {
+    pinMode(LED0, OUTPUT);
+    pinMode(LED1, OUTPUT);
+    pinMode(LED2, OUTPUT);
+    pinMode(LED3, OUTPUT);
     pinMode(LED4, OUTPUT);
     analogWrite(LED1, brightness);
     Serial.begin(115200);

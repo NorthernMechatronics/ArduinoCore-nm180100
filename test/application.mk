@@ -71,6 +71,7 @@ SRC += wiring_shift.c
 SRC += wiring_pulse.c
 SRC += main.cpp
 SRC += HardwareSerial.cpp
+SRC += Tone.cpp
 
 SRC += PeripheralPins.c
 SRC += Peripherals.cpp

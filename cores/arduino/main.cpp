@@ -85,7 +85,7 @@ void system_timer_init(void)
     am_hal_ctimer_config_single(
         SYSTEM_TIMER_COUNTER_MS_NUM,
         SYSTEM_TIMER_COUNTER_MS_SEG,
-        (AM_HAL_CTIMER_FN_REPEAT | AM_HAL_CTIMER_INT_ENABLE |
+        (AM_HAL_CTIMER_FN_REPEAT |
          _VAL2FLD(CTIMER_CTRL0_TMRA0CLK, 0x16)));
     
     am_hal_ctimer_start(
