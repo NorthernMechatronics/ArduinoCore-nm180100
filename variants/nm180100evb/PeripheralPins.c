@@ -49,18 +49,31 @@ const PinMap PinMap_UART_RX[] =
 
 const PinMap PinMap_SPI_MOSI[] =
 {
+		{ GPIO07, SPI_0, AM_HAL_PIN_7_M0MOSI },
+		{ GPIO10, SPI_1, AM_HAL_PIN_10_M1MOSI },
+		{ GPIO28, SPI_2, AM_HAL_PIN_28_M2MOSI },
+		{ GPIO38, SPI_3, AM_HAL_PIN_38_M3MOSI },
 };
 
 const PinMap PinMap_SPI_MISO[] =
 {
+		{ GPIO06, SPI_0, AM_HAL_PIN_6_M0MISO },
+		{ GPIO09, SPI_1, AM_HAL_PIN_9_M1MISO },
+		{ GPIO25, SPI_2, AM_HAL_PIN_25_M2MISO },
+		{ GPIO43, SPI_3, AM_HAL_PIN_43_M3MISO },
 };
 
 const PinMap PinMap_SPI_SCLK[] =
 {
+		{ GPIO05, SPI_0, AM_HAL_PIN_5_M0SCK },
+		{ GPIO08, SPI_1, AM_HAL_PIN_8_M1SCK },
+		{ GPIO27, SPI_2, AM_HAL_PIN_27_M2SCK },
+		{ GPIO42, SPI_3, AM_HAL_PIN_42_M3SCK },
 };
 
 const PinMap PinMap_SPI_SSEL[] =
 {
+		{ GPIO36, SPI_3, AM_HAL_PIN_36_NCE36 },
 };
 
 const PinMap PinMap_I2C_SDA[] =
