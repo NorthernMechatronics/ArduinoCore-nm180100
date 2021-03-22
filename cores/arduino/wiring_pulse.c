@@ -32,7 +32,7 @@ extern "C" {
  * ATTENTION:
  * This function relies on micros() so cannot be used in noInterrupt() context
  */
-uint32_t pulseIn(uint32_t pin, uint32_t state, uint32_t timeout)
+unsigned long pulseIn(pin_size_t pin, uint8_t state, unsigned long timeout)
 {
   uint32_t bit;
   am_hal_gpio_state_read(pin, AM_HAL_GPIO_INPUT_READ, &bit);
@@ -73,6 +73,7 @@ uint32_t pulseIn(uint32_t pin, uint32_t state, uint32_t timeout)
  * ATTENTION:
  * This function relies on micros() so cannot be used in noInterrupt() context
  */
-uint32_t pulseInLong(uint32_t pin, uint32_t state, uint32_t timeout)
+unsigned long pulseInLong(pin_size_t pin, uint8_t state, unsigned long timeout)
 {
   return pulseIn(pin, state, timeout);
+}
