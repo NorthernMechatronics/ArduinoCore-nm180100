@@ -30,6 +30,7 @@
 #include "pinmap.h"
 #include "timermap.h"
 #include "PeripheralPins.h"
+#include "wiring_analog.h"
 
 #define ARDUINO_MAIN
 
@@ -154,59 +155,100 @@ int analogRead(pin_size_t pinNumber)
     return scaled_code;
 }
 
-void analogWrite(pin_size_t pinNumber, int value)
+void pwmWrite(pin_size_t pinNumber, uint32_t seg, uint32_t num, uint32_t reg, uint16_t period, uint16_t value, uint32_t clock)
 {
-    if (value == 0)
+    am_hal_ctimer_stop(num, seg);
+
+    am_hal_ctimer_output_config(num, seg, pinNumber,
+            reg ? AM_HAL_CTIMER_OUTPUT_SECONDARY : AM_HAL_CTIMER_OUTPUT_NORMAL,
+            AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA);
+
+    am_hal_ctimer_config_single(
+            num, seg,
+            (AM_HAL_CTIMER_FN_PWM_REPEAT | clock));
+
+    if (reg == 1)
     {
-        pinMode(pinNumber, OUTPUT);
-        digitalWrite(pinNumber, LOW);
-        return;
+        // If the output is directed to OUT2, enable CMPR2 and CMPR3.
+        // Refer to Section 13.4 in the data sheet for details.
+        uint32_t *pui32ConfigReg = (uint32_t *)CTIMERADDRn(CTIMER, num, AUX0);
+        uint32_t  ui32WriteVal   = AM_REGVAL(pui32ConfigReg);
+        uint32_t  ui32ConfigVal  = (1 << CTIMER_AUX0_TMRA0EN23_Pos);
+
+        if (seg == AM_HAL_CTIMER_TIMERB)
+        {
+            ui32ConfigVal = ((ui32ConfigVal & 0xFFFF) << 16);
+        }
+        ui32WriteVal |= ui32ConfigVal;
+        AM_REGVAL(pui32ConfigReg) = ui32WriteVal;
+
+        am_hal_ctimer_period_set(num, seg, period, period - 1);
+        am_hal_ctimer_aux_period_set(num, seg, period, value);
     }
-    else if (value == 255)
+    else
     {
-        pinMode(pinNumber, OUTPUT);
-        digitalWrite(pinNumber, HIGH);
-        return;
+        uint32_t *pui32ConfigReg = (uint32_t *)CTIMERADDRn(CTIMER, num, AUX0);
+
+        uint32_t auxEnabled = 0;
+        if (seg == AM_HAL_CTIMER_TIMERB)
+        {
+            auxEnabled = (AM_REGVAL(pui32ConfigReg) & (CTIMER_AUX0_TMRA0EN23_Msk << 16));
+        }
+        else
+        {
+            auxEnabled = (AM_REGVAL(pui32ConfigReg) & CTIMER_AUX0_TMRA0EN23_Msk);
+        }
+
+        if (auxEnabled)
+        {
+            am_hal_ctimer_aux_period_set(num, seg, period, period - 1);
+        }
+        am_hal_ctimer_period_set(num, seg, period, value);
     }
 
+    am_hal_ctimer_start(num, seg);
+}
+
+void analogWrite(pin_size_t pinNumber, int value)
+{
     uint32_t seg;
     uint32_t num;
     uint32_t reg;
 
     timermap_ct_available(pinNumber, &seg, &num, &reg);
 
-    switch(seg)
+    if (seg == -1)
     {
-    case 0:
-        seg = AM_HAL_CTIMER_TIMERA;
-        break;
-    case 1:
-        seg = AM_HAL_CTIMER_TIMERB;
-        break;
+        pinMode(pinNumber, OUTPUT);
+        if (value < 128)
+        {
+            digitalWrite(pinNumber, LOW);
+        }
+        else
+        {
+            digitalWrite(pinNumber, HIGH);
+        }
+        return;
     }
 
-    seg = AM_HAL_CTIMER_TIMERB;
-    num = 2;
-    reg = 1;
-
-    am_hal_ctimer_output_config(num, seg, pinNumber,
-            AM_HAL_CTIMER_OUTPUT_NORMAL,
-            AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA);
-
-    am_hal_ctimer_config_single(
-            num, seg,
-            (AM_HAL_CTIMER_FN_PWM_REPEAT | AM_HAL_CTIMER_LFRC_32HZ));
-
-    if (reg == 0)
+    if (value == 0)
     {
-        am_hal_ctimer_period_set(num, seg, 32, 31);
+        timermap_ct_assign(seg, num, -1);
+        pinMode(pinNumber, OUTPUT);
+        digitalWrite(pinNumber, LOW);
+    }
+    else if (value == 255)
+    {
+        timermap_ct_assign(seg, num, -1);
+        pinMode(pinNumber, OUTPUT);
+        digitalWrite(pinNumber, HIGH);
     }
     else
     {
-        am_hal_ctimer_aux_period_set(num, seg, 32, 1);
+        pwmWrite(pinNumber,
+                 seg ? AM_HAL_CTIMER_TIMERB : AM_HAL_CTIMER_TIMERA,
+                 num, reg, 255, value, AM_HAL_CTIMER_HFRC_12KHZ);
     }
-
-    am_hal_ctimer_start(num, seg);
 }
 
 void analogReference(am_hal_adc_refsel_e ref)
@@ -242,7 +284,7 @@ void analogReadResolution(uint8_t bits)
 
 void analogWriteResolution(uint8_t bits)
 {
-
+    pwm_write_resolution = bits;
 }
 
 void am_adc_isr(void)

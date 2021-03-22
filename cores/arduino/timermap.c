@@ -95,7 +95,16 @@ void timermap_ct_assign(uint8_t seg, uint8_t num, int16_t user)
 
 void timermap_ct_available(PinName pin, uint32_t *seg, uint32_t *num, uint32_t *reg)
 {
+    *seg = -1;
+    *num = -1;
+    *reg = -1;
+
     int16_t ct = timermap_ct_find(pin);
+
+    if (ct == -1)
+    {
+        return;
+    }
 
     for (int i = 0; i < 4; i++)
     {
@@ -114,8 +123,4 @@ void timermap_ct_available(PinName pin, uint32_t *seg, uint32_t *num, uint32_t *
             return;
         }
     }
-
-    *seg = -1;
-    *num = -1;
-    *reg = -1;
 }
