@@ -33,6 +33,7 @@ extern "C" {
 
 #define ARDUINO_MAIN
 #include "Common.h"
+#include "timermap.h"
 
 static am_hal_gpio_pincfg_t gpio_pincfg[AM_HAL_GPIO_MAX_PADS] = { 0 };
 
