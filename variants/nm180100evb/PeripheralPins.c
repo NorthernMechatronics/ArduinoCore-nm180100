@@ -65,10 +65,19 @@ const PinMap PinMap_SPI_SSEL[] =
 
 const PinMap PinMap_I2C_SDA[] =
 {
+		{ GPIO06, I2C_0, AM_HAL_PIN_6_M0SDAWIR3 },
+		{ GPIO09, I2C_1, AM_HAL_PIN_9_M1SDAWIR3 },
+		{ GPIO25, I2C_2, AM_HAL_PIN_25_M2SDAWIR3 },
+		{ GPIO49, I2C_5, AM_HAL_PIN_49_M5SDAWIR3 },
+
 };
 
 const PinMap PinMap_I2C_SCL[] =
 {
+		{ GPIO05, I2C_0, AM_HAL_PIN_5_M0SCL },
+		{ GPIO08, I2C_1, AM_HAL_PIN_8_M1SCL },
+		{ GPIO27, I2C_2, AM_HAL_PIN_27_M2SCL },
+		{ GPIO48, I2C_5, AM_HAL_PIN_48_M5SCL },
 };
 
 const PinMap PinMap_ADC[] =
