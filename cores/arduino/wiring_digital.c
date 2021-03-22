@@ -53,6 +53,14 @@ void pinMode(pin_size_t pin, PinMode mode)
     default:
         pincfg = g_AM_HAL_GPIO_DISABLE;
     }
+
+    uint32_t seg, num, reg;
+    timermap_ct_available(pin, &seg, &num, &reg);
+    if (seg != -1)
+    {
+        timermap_ct_assign(seg, num, -1);
+        am_hal_ctimer_stop(num, seg ? AM_HAL_CTIMER_TIMERB : AM_HAL_CTIMER_TIMERA);
+    }
     
     gpio_pincfg[pin] = pincfg;
     am_hal_gpio_pinconfig(pin, pincfg);
