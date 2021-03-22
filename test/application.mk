@@ -68,8 +68,8 @@ SRC += startup_gcc.c
 SRC += wiring_analog.c
 SRC += wiring_digital.c
 SRC += wiring_shift.c
+SRC += wiring_pulse.c
 SRC += main.cpp
-#SRC += Uart.cpp
 SRC += HardwareSerial.cpp
 
 SRC += PeripheralPins.c
