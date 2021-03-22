@@ -8,36 +8,35 @@ extern "C" {
 }
 #endif
 
+#include "Common.h"
+#include "pinmap.h"
+#include "timermap.h"
+#include "wiring_analog.h"
 #include "Arduino.h"
 
-static int counter = 0;
-
-void toneFunction()
+void tone(pin_size_t pin, unsigned int frequency, unsigned long duration)
 {
-    counter++;
-    if (counter >= 1000000)
+    uint32_t seg;
+    uint32_t num;
+    uint32_t reg;
+
+    timermap_ct_available((PinName)pin, &seg, &num, &reg);
+
+    if (seg == -1)
     {
-        digitalToggle(LED0);
-        counter = 0;
+        return;
     }
 
+    uint32_t period, cycle;
+    period = 1e12 / frequency;
+    cycle = period >> 1;
+
+    pwmWrite((PinName)pin,
+             seg ? AM_HAL_CTIMER_TIMERB : AM_HAL_CTIMER_TIMERA,
+             num, reg, period, cycle, AM_HAL_CTIMER_HFRC_12MHZ);
 }
 
-void toneInit()
-{
-    /*
-    am_hal_ctimer_int_enable(AM_HAL_CTIMER_INT_TIMERA0C0);
-    am_hal_ctimer_int_register(AM_HAL_CTIMER_INT_TIMERA0C0, toneFunction);
-    NVIC_EnableIRQ(CTIMER_IRQn);
-    */
-}
-
-void tone(uint8_t _pin, unsigned int frequency, unsigned long duration)
-{
-
-}
-
-void noTone(uint8_t _pin)
+void noTone(pin_size_t pin)
 {
 
 }
