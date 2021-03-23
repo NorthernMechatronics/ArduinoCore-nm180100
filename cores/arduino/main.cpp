@@ -96,6 +96,7 @@ void system_timer_init(void)
     timermap_ct_assign(0, 0, 0xFF);
     timermap_ct_assign(1, 0, 0xFF);
     timermap_ct_assign(0, 1, 0xFF);
+    timermap_ct_assign(1, 1, 0xFF);
     timermap_ct_assign(0, 3, 0xFF);
 }
 
