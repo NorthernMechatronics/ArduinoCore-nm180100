@@ -1,24 +1,35 @@
 #include <Arduino.h>
 
 unsigned int counter = 0;
-int brightness = 100;
+int brightness = 210;
 int incoming = 0;
+unsigned current = 0;
+unsigned previous = 0;
+unsigned period = 1000;
+
 void setup()
 {
-    pinMode(LED0, OUTPUT);
+    //pinMode(LED0, OUTPUT);
     pinMode(LED1, OUTPUT);
     pinMode(LED2, OUTPUT);
     pinMode(LED3, OUTPUT);
     pinMode(LED4, OUTPUT);
-    analogWrite(LED1, brightness);
+    tone(GPIO05, 100, 5000);
     Serial.begin(115200);
+
+    current = millis();
+    previous = current;
 }
 
 void loop()
 {
-    delay(1000);
-    digitalToggle(LED4);
-    Serial.println(counter++);
+    current = millis();
+    if ((current - previous) > period)
+    {
+        previous = current;
+        digitalToggle(LED4);
+        Serial.println(counter++);
+    }
 
     incoming = Serial.read();
     if(incoming == 's')

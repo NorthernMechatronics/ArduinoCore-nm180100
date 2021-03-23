@@ -56,6 +56,7 @@ void system_timer_init(void)
 
     am_hal_stimer_config(AM_HAL_STIMER_CFG_CLEAR | AM_HAL_STIMER_CFG_FREEZE);
     am_hal_stimer_config(AM_HAL_STIMER_HFRC_CTIMER0A |
+        AM_HAL_STIMER_CFG_COMPARE_A_ENABLE |
         AM_HAL_STIMER_CFG_RUN);
 
     // trigger source for millisecond counter
