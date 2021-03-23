@@ -169,7 +169,14 @@ void pwmWrite(pin_size_t pinNumber, uint32_t seg, uint32_t num, uint32_t reg, ui
 
     if (reg == 1)
     {
-        // If the output is directed to OUT2, enable CMPR2 and CMPR3.
+        // If the output is directed to OUT2, we need to enable
+        // CMPR2 and CMPR3 to toggle the output pin.  We also need to
+        // ensure that the value in CMPR2 and CMPR3 is less than CMPR1
+        // or OUT2 will only toggle once per OUT cycle.
+        //
+        // Unfortunately at the time of this writing the AmbiqSuite R2.5.1
+        // APIs had not yet implemented this behaviour.
+        //
         // Refer to Section 13.4 in the data sheet for details.
         uint32_t *pui32ConfigReg = (uint32_t *)CTIMERADDRn(CTIMER, num, AUX0);
         uint32_t  ui32WriteVal   = AM_REGVAL(pui32ConfigReg);
@@ -182,11 +189,19 @@ void pwmWrite(pin_size_t pinNumber, uint32_t seg, uint32_t num, uint32_t reg, ui
         ui32WriteVal |= ui32ConfigVal;
         AM_REGVAL(pui32ConfigReg) = ui32WriteVal;
 
+        // CMPR0 = period - (period - 1) = 1; OK
+        // CMPR1 = period; guarantee greater than CMPR2 and CMPR3
         am_hal_ctimer_period_set(num, seg, period, period - 1);
+
+        // CMPR2 = period - value
+        // CMPR3 = value
         am_hal_ctimer_aux_period_set(num, seg, period, value);
     }
     else
     {
+        // TODO: If output is directed to OUT then there should be no need to
+        // check for CMPR2 and CMPR3
+        /*
         uint32_t *pui32ConfigReg = (uint32_t *)CTIMERADDRn(CTIMER, num, AUX0);
 
         uint32_t auxEnabled = 0;
@@ -203,6 +218,8 @@ void pwmWrite(pin_size_t pinNumber, uint32_t seg, uint32_t num, uint32_t reg, ui
         {
             am_hal_ctimer_aux_period_set(num, seg, period, period - 1);
         }
+        */
+
         am_hal_ctimer_period_set(num, seg, period, value);
     }
 
