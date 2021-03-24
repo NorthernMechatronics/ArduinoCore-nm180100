@@ -77,6 +77,8 @@ SRC += PeripheralPins.c
 SRC += Peripherals.cpp
 SRC += variant.cpp
 
+SRC += Servo.cpp
+
 INCLUDES += -I../libraries/Servo/src
 INCLUDES += -I../libraries/Servo/src/apollo3
 VPATH += ../libraries/Servo/src
