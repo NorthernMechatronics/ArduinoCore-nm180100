@@ -43,29 +43,9 @@
 
 #include <inttypes.h>
 
-#define Servo_VERSION 2 // software version of this library
-
-#define MIN_PULSE_WIDTH 544      // the shortest pulse sent to a servo
-#define MAX_PULSE_WIDTH 2400     // the longest pulse sent to a servo
+#define MIN_PULSE_WIDTH 900      // the shortest pulse sent to a servo
+#define MAX_PULSE_WIDTH 2100     // the longest pulse sent to a servo
 #define DEFAULT_PULSE_WIDTH 1500 // default pulse width when servo is attached
-#define REFRESH_INTERVAL 20000 // minumim time to refresh servos in microseconds
-
-#define SERVOS_PER_TIMER                                                       \
-    8 // the maximum number of servos controlled by one timer
-#define MAX_SERVOS (SERVOS_PER_TIMER)
-
-#define INVALID_SERVO 255 // flag indicating an invalid servo index
-
-typedef struct {
-    uint8_t pinNumber; // a pin number from 0 to 63
-    uint8_t
-        isActive; // true if this channel is enabled, pin not pulsed if false
-} ServoPin_t;
-
-typedef struct {
-    ServoPin_t Pin;
-    volatile unsigned int ticks;
-} servo_t;
 
 class Servo
 {
@@ -86,7 +66,12 @@ class Servo
     readMicroseconds(); // returns current pulse width in microseconds for this servo (was read_us() in first release)
     bool attached(); // return true if this servo is attached, otherwise false
   private:
-    uint8_t servoIndex; // index into the channel data for this servo
+    uint8_t  pinNumber; // index into the channel data for this servo
+    uint32_t timerSegment;
+    uint32_t timerNumber;
+    uint32_t outputRegister;
+
+    int16_t value;
     int16_t min; // minimum is this value times 4 added to MIN_PULSE_WIDTH
     int16_t max; // maximum is this value times 4 added to MAX_PULSE_WIDTH
 };

@@ -17,20 +17,16 @@
 */
 #include <Arduino.h>
 #include <Servo.h>
+#include <timermap.h>
+#include <wiring_analog.h>
 
-static servo_t servos[MAX_SERVOS];
-static volatile int8_t timerChannel = -1;
-static uint8_t ServoCount = 0;
-static volatile uint32_t CumulativeCountSinceRefresh = 0;
+extern "C" {
+#include <am_mcu_apollo.h>
+}
 
-Servo::Servo() : min(MIN_PULSE_WIDTH), max(MAX_PULSE_WIDTH)
+
+Servo::Servo()
 {
-    if (ServoCount < MAX_SERVOS) {
-        servoIndex = ServoCount++;
-        servos[servoIndex].ticks = DEFAULT_PULSE_WIDTH;
-    } else {
-        servoIndex = INVALID_SERVO;
-    }
 }
 
 uint8_t Servo::attach(int pin)
@@ -40,21 +36,31 @@ uint8_t Servo::attach(int pin)
 
 uint8_t Servo::attach(int pin, int min, int max)
 {
-    if (servoIndex < MAX_SERVOS) {
-        servos[servoIndex].Pin.pinNumber = pin;
-        this->min = (MIN_PULSE_WIDTH - min) / 4;
-        this->max = (MAX_PULSE_WIDTH - max) / 4;
-        servos[servoIndex].Pin.isActive = true;
+    timermap_ct_available((PinName)pin, &timerSegment, &timerNumber, &outputRegister);
+
+    if (timerSegment != -1)
+    {
+        this->min = min;
+        this->max = max;
+        this->value = DEFAULT_PULSE_WIDTH;
+        this->pinNumber = pin;
+
+        uint16_t dutycycle = this->value * 3;
+        pwmWrite(pinNumber, timerSegment ? AM_HAL_CTIMER_TIMERB : AM_HAL_CTIMER_TIMERA,
+                timerNumber, outputRegister, 60000, dutycycle, AM_HAL_CTIMER_HFRC_3MHZ);
     }
 
-    return servoIndex;
+    return timerSegment;
 }
 
-void Servo::detach() { servos[servoIndex].Pin.isActive = false; }
+void Servo::detach()
+{
+    am_hal_ctimer_stop(timerNumber,
+            timerSegment ? AM_HAL_CTIMER_TIMERB : AM_HAL_CTIMER_TIMERA);
+}
 
 void Servo::write(int value)
 {
-    // treat values less than 544 as angles in degrees (valid values in microseconds are handled as microseconds)
     if (value < MIN_PULSE_WIDTH) {
         if (value < 0) {
             value = 0;
@@ -62,46 +68,50 @@ void Servo::write(int value)
             value = 180;
         }
 
-        value = map(value, 0, 180, (MIN_PULSE_WIDTH - min * 4),
-                    (MAX_PULSE_WIDTH - max * 4));
+        value = map(value, 0, 180, min, max);
     }
     writeMicroseconds(value);
 }
 
 void Servo::writeMicroseconds(int value)
 {
-    // calculate and store the values for the given channel
-    byte channel = this->servoIndex;
-    if ((channel < MAX_SERVOS)) { // ensure channel is valid
-        if (value <
-            (MIN_PULSE_WIDTH - min * 4)) { // ensure pulse width is valid
-            value = (MIN_PULSE_WIDTH - min * 4);
-        } else if (value > (MAX_PULSE_WIDTH - max * 4)) {
-            value = (MAX_PULSE_WIDTH - max * 4);
-        }
-
-        servos[channel].ticks = value;
+    if (value < min)
+    {
+        this->value = min;
     }
+    else if (value > max)
+    {
+        this->value = max;
+    }
+
+    this->value = value;
+
+    uint16_t dutycycle = value * 3;
+    am_hal_ctimer_stop(timerNumber,
+            timerSegment ? AM_HAL_CTIMER_TIMERB : AM_HAL_CTIMER_TIMERA);
+    am_hal_ctimer_clear(timerNumber,
+            timerSegment ? AM_HAL_CTIMER_TIMERB : AM_HAL_CTIMER_TIMERA);
+    pwmWrite(pinNumber, timerSegment ? AM_HAL_CTIMER_TIMERB : AM_HAL_CTIMER_TIMERA,
+            timerNumber, outputRegister, 60000, dutycycle, AM_HAL_CTIMER_HFRC_3MHZ);
 }
 
 int Servo::read() // return the value as degrees
 {
-    return map(readMicroseconds() + 1,
-            (MIN_PULSE_WIDTH - min * 4),
-            (MAX_PULSE_WIDTH - max * 4),
+    return map(readMicroseconds(),
+            min,
+            max,
             0, 180);
 }
 
 int Servo::readMicroseconds()
 {
-    unsigned int pulsewidth;
-    if (this->servoIndex != INVALID_SERVO) {
-        pulsewidth = servos[this->servoIndex].ticks;
-    } else {
-        pulsewidth = 0;
-    }
-
-    return pulsewidth;
+    return value;
 }
 
-bool Servo::attached() { return servos[this->servoIndex].Pin.isActive; }
+bool Servo::attached()
+{
+    if (timerSegment > -1)
+        return true;
+
+    return false;
+}
