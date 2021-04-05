@@ -18,45 +18,90 @@
 #include <Arduino.h>
 #include <Servo.h>
 
-Servo::Servo()
+static servo_t servos[MAX_SERVOS];
+static volatile int8_t timerChannel = -1;
+static uint8_t ServoCount = 0;
+static volatile uint32_t CumulativeCountSinceRefresh = 0;
+
+Servo::Servo() : min(MIN_PULSE_WIDTH), max(MAX_PULSE_WIDTH)
 {
+    if (ServoCount < MAX_SERVOS) {
+        servoIndex = ServoCount++;
+        servos[servoIndex].ticks = DEFAULT_PULSE_WIDTH;
+    } else {
+        servoIndex = INVALID_SERVO;
+    }
 }
 
-uint8_t Servo::attach(int pin, int value)
+uint8_t Servo::attach(int pin)
 {
-  return this->attach(pin, MIN_PULSE_WIDTH, MAX_PULSE_WIDTH, value);
+    return attach(pin, MIN_PULSE_WIDTH, MAX_PULSE_WIDTH);
 }
 
-uint8_t Servo::attach(int pin, int min, int max, int value)
+uint8_t Servo::attach(int pin, int min, int max)
 {
-  return 0;
+    if (servoIndex < MAX_SERVOS) {
+        servos[servoIndex].Pin.pinNumber = pin;
+        this->min = (MIN_PULSE_WIDTH - min) / 4;
+        this->max = (MAX_PULSE_WIDTH - max) / 4;
+        servos[servoIndex].Pin.isActive = true;
+    }
+
+    return servoIndex;
 }
 
-void Servo::detach()
-{
-}
+void Servo::detach() { servos[servoIndex].Pin.isActive = false; }
 
 void Servo::write(int value)
 {
+    // treat values less than 544 as angles in degrees (valid values in microseconds are handled as microseconds)
+    if (value < MIN_PULSE_WIDTH) {
+        if (value < 0) {
+            value = 0;
+        } else if (value > 180) {
+            value = 180;
+        }
+
+        value = map(value, 0, 180, (MIN_PULSE_WIDTH - min * 4),
+                    (MAX_PULSE_WIDTH - max * 4));
+    }
+    writeMicroseconds(value);
 }
 
 void Servo::writeMicroseconds(int value)
 {
+    // calculate and store the values for the given channel
+    byte channel = this->servoIndex;
+    if ((channel < MAX_SERVOS)) { // ensure channel is valid
+        if (value <
+            (MIN_PULSE_WIDTH - min * 4)) { // ensure pulse width is valid
+            value = (MIN_PULSE_WIDTH - min * 4);
+        } else if (value > (MAX_PULSE_WIDTH - max * 4)) {
+            value = (MAX_PULSE_WIDTH - max * 4);
+        }
+
+        servos[channel].ticks = value;
+    }
 }
 
 int Servo::read() // return the value as degrees
 {
-    return 0;
+    return map(readMicroseconds() + 1,
+            (MIN_PULSE_WIDTH - min * 4),
+            (MAX_PULSE_WIDTH - max * 4),
+            0, 180);
 }
 
 int Servo::readMicroseconds()
 {
-  unsigned int pulsewidth;
+    unsigned int pulsewidth;
+    if (this->servoIndex != INVALID_SERVO) {
+        pulsewidth = servos[this->servoIndex].ticks;
+    } else {
+        pulsewidth = 0;
+    }
 
-  return pulsewidth;
+    return pulsewidth;
 }
 
-bool Servo::attached()
-{
-  return false;
-}
+bool Servo::attached() { return servos[this->servoIndex].Pin.isActive; }
