@@ -84,5 +84,9 @@ INCLUDES += -I../libraries/Servo/src/apollo3
 VPATH += ../libraries/Servo/src
 VPATH += ../libraries/Servo/src/apollo3
 
+INCLUDES += -I../libraries/Wire/src
+VPATH += ../libraries/Wire/src
+SRC += Wire.cpp
+
 SRC += test.cpp
 
