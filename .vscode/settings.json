@@ -1,0 +1,10 @@
+{
+    "cmake.buildDirectory": "${workspaceFolder}/test/build/${buildType}",
+    "cmake.buildTask": true,
+    "cmake.setBuildTypeOnMultiConfig": true,
+    "cmake.configureOnOpen": false,
+    "cmake.configureArgs": [
+        "-DCMAKE_TOOLCHAIN_FILE=${workspaceFolder}/cores/nmsdk2/targets/nm180100/build.cmake"
+    ],
+    "cmake.generator": "Unix Makefiles"
+}
