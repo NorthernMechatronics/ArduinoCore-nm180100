@@ -25,6 +25,7 @@ target_sources(
     ${CORE_DIR}/String.cpp
 
     api/interrupts.c
+    api/random.cpp
     api/time.c
     api/wiring_digital.c
     api/wiring_shift.c
