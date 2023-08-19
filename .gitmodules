@@ -1,3 +1,6 @@
 [submodule "cores/arduino"]
 	path = cores/arduino
 	url = https://github.com/arduino/ArduinoCore-API
+[submodule "cores/nmsdk2"]
+	path = cores/nmsdk2
+	url = https://github.com/NorthernMechatronics/nmsdk2.git
