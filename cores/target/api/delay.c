@@ -30,6 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include <am_mcu_apollo.h>
+#include <am_util.h>
 
 #include <FreeRTOS.h>
 #include <task.h>
@@ -39,4 +40,9 @@
 void delay(unsigned long ms)
 {
     vTaskDelay(pdMS_TO_TICKS(ms));
+}
+
+void delayMicroseconds(unsigned int us)
+{
+    am_util_delay_us(us);
 }

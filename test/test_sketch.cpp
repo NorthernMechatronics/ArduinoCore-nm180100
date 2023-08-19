@@ -33,10 +33,13 @@
 
 void setup(void)
 {
-
+    pinMode(10, OUTPUT);
+    pinMode(16, INPUT);
+    digitalWrite(10, LOW);
 }
 
 void loop(void)
 {
-
+    PinStatus state = digitalRead(16);
+    digitalWrite(10, state);
 }
