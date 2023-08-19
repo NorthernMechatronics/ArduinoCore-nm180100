@@ -10,14 +10,14 @@ add_subdirectory(cores)
 
 project(${APPLICATION})
 
+add_library(arduino STATIC $<TARGET_OBJECTS:hal> $<TARGET_OBJECTS:rtos> $<TARGET_OBJECTS:core>)
+
 add_executable(${APPLICATION})
 
 target_link_libraries(
     ${APPLICATION}
     PRIVATE
-        rtos
-        hal
-        core
+        arduino
     PUBLIC
         -T${PROJECT_SOURCE_DIR}/variants/${BOARD}/AMA3B1KK.ld
         -Wl,--start-group
@@ -47,6 +47,7 @@ target_sources(
     PRIVATE
     ${PROJECT_SOURCE_DIR}/variants/${BOARD}/startup_gcc.c
     ${PROJECT_SOURCE_DIR}/variants/${BOARD}/main.c
+    ${PROJECT_SOURCE_DIR}/test/test_sketch.c
 )
 
 add_custom_command(
@@ -55,4 +56,7 @@ add_custom_command(
     COMMAND ${CMAKE_OBJCOPY} -Obinary $<TARGET_FILE_NAME:${APPLICATION}> $<TARGET_FILE_NAME:${APPLICATION}>.bin
 )
 
-add_dependencies(${APPLICATION} hal rtos core)
+add_dependencies(arduino hal rtos core)
+add_dependencies(${APPLICATION} arduino)
+
+install(TARGETS arduino DESTINATION ${PROJECT_SOURCE_DIR}/variants/${BOARD}/lib)

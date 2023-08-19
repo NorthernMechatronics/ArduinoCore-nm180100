@@ -29,32 +29,14 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include <am_mcu_apollo.h>
-#include <am_util.h>
-
-#include <FreeRTOS.h>
-#include <task.h>
-
 #include <Common.h>
 
-static TaskHandle_t user_task_handle;
-
-static void user_task_setup()
+void setup(void)
 {
-    setup();
+
 }
 
-static void user_task(void *parameter)
+void loop(void)
 {
-    user_task_setup();
-    while (1)
-    {
-        loop();
-        taskYIELD();
-    }
-}
 
-void user_task_create(uint32_t priority)
-{
-    xTaskCreate(user_task, "user", 512, 0, priority, &user_task_handle);
 }
