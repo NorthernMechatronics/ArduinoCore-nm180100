@@ -23,5 +23,6 @@ target_sources(
     ${CORE_DIR}/Print.cpp
     ${CORE_DIR}/Stream.cpp
     ${CORE_DIR}/String.cpp
+    api/wiring_digital.c
     user_task.c
 )
