@@ -91,3 +91,69 @@ PinStatus digitalRead(pin_size_t pin)
 
 	return LOW;
 }
+
+static uint32_t configInterrupt(pin_size_t pin, PinStatus mode)
+{
+    am_hal_gpio_intdir_e intdir;
+
+    switch (mode)
+    {
+    case FALLING:
+        intdir = AM_HAL_GPIO_PIN_INTDIR_HI2LO;
+        break;
+
+    case RISING:
+        intdir = AM_HAL_GPIO_PIN_INTDIR_LO2HI;
+        break;
+
+    case CHANGE:
+        intdir = AM_HAL_GPIO_PIN_INTDIR_BOTH;
+        break;
+
+    default:
+        intdir = AM_HAL_GPIO_PIN_INTDIR_NONE;
+        break;
+    }
+
+    gpio_pincfg[pin].eIntDir = intdir;
+    am_hal_gpio_pinconfig(pin, gpio_pincfg[pin]);
+    
+    AM_HAL_GPIO_MASKCREATE(GpioIntMask);
+    AM_HAL_GPIO_MASKBIT(pGpioIntMask, pin);
+    if (intdir == AM_HAL_GPIO_PIN_INTDIR_NONE)
+    {
+        am_hal_gpio_interrupt_disable(pGpioIntMask);
+        am_hal_gpio_interrupt_clear(pGpioIntMask);
+        return AM_HAL_STATUS_FAIL;
+    }
+
+    am_hal_gpio_interrupt_clear(pGpioIntMask);
+    am_hal_gpio_interrupt_enable(pGpioIntMask);
+
+    return AM_HAL_STATUS_SUCCESS;
+}
+
+void attachInterrupt(pin_size_t pin, voidFuncPtr callback, PinStatus mode)
+{
+    if (configInterrupt(pin, mode) == AM_HAL_STATUS_SUCCESS)
+    {
+        am_hal_gpio_interrupt_register(pin, callback);
+    }
+}
+
+void attachInterruptParam(pin_size_t pin, voidFuncPtrParam callback, PinStatus mode, void* param)
+{
+    if (configInterrupt(pin, mode) == AM_HAL_STATUS_SUCCESS)
+    {
+        am_hal_gpio_interrupt_register_adv(pin, callback, param);
+    }
+}
+
+void detachInterrupt(pin_size_t pin)
+{
+    AM_HAL_GPIO_MASKCREATE(GpioIntMask);
+    AM_HAL_GPIO_MASKBIT(pGpioIntMask, pin);
+    am_hal_gpio_interrupt_disable(pGpioIntMask);
+    am_hal_gpio_interrupt_clear(pGpioIntMask);
+    am_hal_gpio_interrupt_register(pin, NULL);
+}
