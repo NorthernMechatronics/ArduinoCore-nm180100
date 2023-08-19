@@ -17,5 +17,11 @@ target_include_directories(
 
 target_sources(
     core PRIVATE
+    ${CORE_DIR}/Common.cpp
+    ${CORE_DIR}/IPAddress.cpp
+    ${CORE_DIR}/PluggableUSB.cpp
+    ${CORE_DIR}/Print.cpp
+    ${CORE_DIR}/Stream.cpp
+    ${CORE_DIR}/String.cpp
     user_task.c
 )
