@@ -1,7 +1,7 @@
 /*
  * BSD 3-Clause License
  *
- * Copyright (c) 2022, Northern Mechatronics, Inc.
+ * Copyright (c) 2023, Northern Mechatronics, Inc.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,6 +40,8 @@
 
 #include <FreeRTOS.h>
 #include <task.h>
+
+#include "user_task.h"
 
 //*****************************************************************************
 //
@@ -158,6 +160,7 @@ void system_start(void)
     //
     // Start the scheduler.
     //
+    user_task_create(2);
     vTaskStartScheduler();
 }
 
