@@ -26,6 +26,7 @@ target_sources(
 
     api/time.c
     api/wiring_digital.c
+    api/wiring_shift.c
 
     user_task.c
 )
