@@ -47,7 +47,7 @@ target_sources(
     PRIVATE
     ${PROJECT_SOURCE_DIR}/variants/${BOARD}/startup_gcc.c
     ${PROJECT_SOURCE_DIR}/variants/${BOARD}/main.c
-    ${PROJECT_SOURCE_DIR}/test/test_sketch.c
+    ${PROJECT_SOURCE_DIR}/test/test_sketch.cpp
 )
 
 add_custom_command(
