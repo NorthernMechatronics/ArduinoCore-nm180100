@@ -147,6 +147,11 @@ uint32_t ct_assignment_get_by_pin(pin_size_t pinNumber)
     return ct_pinmap_tbl[timer].outsel;
 }
 
+uint32_t ct_assignment_get_by_timer(uint32_t timer)
+{
+    return ct_pinmap_tbl[timer].outsel;
+}
+
 uint32_t ct_assign(pin_size_t pinNumber)
 {
     uint32_t timer = ct_find_timer(pinNumber);
