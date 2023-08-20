@@ -29,23 +29,31 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _VARIANT_H_
-#define _VARIANT_H_
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#ifdef __cplusplus
-}
-#endif
-
-#ifdef __cplusplus
 #include "uart.h"
 
-extern Uart Serial;
-extern Uart Serial1;
+extern "C" {
+#include <am_mcu_apollo.h>
+}
 
-#endif
+static UartPinMap Serial1PinMap = {
+    .tx_pin = 35,
+    .rx_pin = 36,
+    .cts_pin = 0,
+    .rts_pin = 0,
+    .tx_pincfg = {
+        .uFuncSel = AM_HAL_PIN_35_UART1TX,
+        .eDriveStrength = AM_HAL_GPIO_PIN_DRIVESTRENGTH_2MA
+    },
+    .rx_pincfg = {
+        .uFuncSel = AM_HAL_PIN_36_UART1RX
+    },
+    .cts_pincfg = { 0 },
+    .rts_pincfg = { 0 },
+};
 
-#endif
+Uart Serial1(1, &Serial1PinMap);
+
+extern "C" void am_uart1_isr(void)
+{
+    Serial1.isr();
+}

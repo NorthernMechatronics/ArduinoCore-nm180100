@@ -29,20 +29,24 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#include "uart.h"
+
 extern "C" {
 #include <am_mcu_apollo.h>
 }
 
-#include "uart.h"
-
-UartPinMap SerialPinMap = {
+static UartPinMap SerialPinMap = {
     .tx_pin = 22,
     .rx_pin = 23,
     .cts_pin = 0,
     .rts_pin = 0,
-    .tx_pincfg = { .uFuncSel = AM_HAL_PIN_22_UART0TX,
-                   .eDriveStrength = AM_HAL_GPIO_PIN_DRIVESTRENGTH_2MA },
-    .rx_pincfg = { .uFuncSel = AM_HAL_PIN_23_UART0RX },
+    .tx_pincfg = {
+        .uFuncSel = AM_HAL_PIN_22_UART0TX,
+        .eDriveStrength = AM_HAL_GPIO_PIN_DRIVESTRENGTH_2MA
+    },
+    .rx_pincfg = {
+        .uFuncSel = AM_HAL_PIN_23_UART0RX
+    },
     .cts_pincfg = { 0 },
     .rts_pincfg = { 0 },
 };
