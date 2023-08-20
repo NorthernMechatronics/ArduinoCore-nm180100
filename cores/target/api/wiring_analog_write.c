@@ -33,12 +33,65 @@
 #include <am_util.h>
 
 #include "ArduinoAPI.h"
+#include "ctimer.h"
+
+static uint32_t pwm_period = 255;
 
 void analogWrite(pin_size_t pinNumber, int value)
 {
+    uint32_t seg, num, reg;
+    uint32_t timer = ct_find_timer(pinNumber);
+    uint32_t outsel = ct_assignment_get_by_timer(timer);
+    if (outsel == CT_UNUSED)
+    {
+        outsel = ct_assign(pinNumber);
+    }
+    seg = CT_OUTSEL_SEG(outsel);
+    num = CT_OUTSEL_NUM(outsel);
+    reg = CT_OUTSEL_REG(outsel);
+
+    am_hal_ctimer_stop(num, seg);
+
+    if (value == 0)
+    {
+        pinMode(pinNumber, OUTPUT);
+        digitalWrite(pinNumber, LOW);
+    }
+    else if (value == pwm_period)
+    {
+        pinMode(pinNumber, OUTPUT);
+        digitalWrite(pinNumber, HIGH);
+    }
+    else
+    {
+        if (seg == 0)
+        {
+            seg = AM_HAL_CTIMER_TIMERA;
+        }
+        else
+        {
+            seg = AM_HAL_CTIMER_TIMERB;
+        }
+
+        am_hal_ctimer_output_config(
+            num,
+            seg,
+            pinNumber,
+            AM_HAL_CTIMER_OUTPUT_NORMAL,
+            AM_HAL_GPIO_PIN_DRIVESTRENGTH_2MA
+        );
+        am_hal_ctimer_config_single(
+            num,
+            seg,
+            (AM_HAL_CTIMER_FN_PWM_REPEAT | AM_HAL_CTIMER_HFRC_12KHZ)
+        );
+        am_hal_ctimer_period_set(num, seg, pwm_period, value);
+        am_hal_ctimer_aux_period_set(num, seg, pwm_period, value);
+        am_hal_ctimer_start(num, seg);
+    }
 }
 
 void analogWriteResolution(uint32_t resolution)
 {
+    pwm_period = (1 << resolution) - 1;
 }
-

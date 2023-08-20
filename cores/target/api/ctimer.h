@@ -36,14 +36,14 @@
 extern "C" {
 #endif
 
-#define CT_ERROR  (0xFFFFFFFF)
-#define CT_UNUSED (0xFFFFFFFF)
+#define CT_ERROR  (0xFF)
+#define CT_UNUSED (0xFF)
 
 #define CT_OUTSEL(seg, num, reg) ((reg << 4) | (seg << 3) | (num << 0))
 #define CT_OUTSEL_NUM(val)       (val & (0x7 << 0))
 #define CT_OUTSEL_SEG(val)       ((val & (0x1 << 3)) >> 3)
 #define CT_OUTSEL_REG(val)       ((val & (0x1 << 4)) >> 4)
-#define CT_OUTSEL_CMP(val1, val2) ((val1 & (0x1 << 4)) == (val2 & (0x1 << 4)))
+#define CT_OUTSEL_CMP(val1, val2) ((val1 & ~(0x1 << 4)) == (val2 & ~(0x1 << 4)))
 
 uint32_t ct_find_timer(pin_size_t pinNumber);
 void ct_assignment_set_by_timer(uint32_t timer, uint32_t outsel);
