@@ -39,6 +39,11 @@ extern "C"
 {
 #endif
 
+#include <am_mcu_apollo.h>
+
+void analogReadResolution(uint32_t mode);
+void analogWriteResolution(uint32_t mode);
+
 void interrupts(void);
 void noInterrupts(void);
 

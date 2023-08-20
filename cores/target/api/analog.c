@@ -54,7 +54,9 @@ typedef struct adc_channel_pincfg_s
 
 static void *adc_handle;
 static am_hal_adc_refsel_e adc_reference = AM_HAL_ADC_REFSEL_INT_2P0;
-static am_hal_adc_slot_prec_e adc_precision = AM_HAL_ADC_SLOT_10BIT;
+static am_hal_adc_slot_prec_e adc_precision_mode = AM_HAL_ADC_SLOT_10BIT;
+uint32_t adc_hardware_precision = 10;
+uint32_t adc_reporting_precision = 10;
 static adc_slot_control_t adc_slot_control;
 static adc_channel_pincfg_t adc_channel_pinmap[ADC_MAX_CHANNEL] =
 {
@@ -153,7 +155,7 @@ static void adc_scan_start(uint32_t channel, uint32_t slot)
         .bWindowCompare = false,
         .eChannel = channel,
         .eMeasToAvg = AM_HAL_ADC_SLOT_AVG_1,
-        .ePrecisionMode = adc_precision,
+        .ePrecisionMode = adc_precision_mode,
     };
 
     adc_init();
@@ -203,6 +205,9 @@ int analogRead(pin_size_t pinNumber)
     am_hal_gpio_pinconfig(pinNumber, g_AM_HAL_GPIO_DISABLE);
 
     uint32_t sample = adc_slot_control.sample;
+    int32_t shift = adc_hardware_precision - adc_reporting_precision;
+    sample = (sample >> shift);
+
     memset(&adc_slot_control, 0, sizeof(adc_slot_control_t));
 
     return sample;
@@ -231,23 +236,33 @@ void analogReadResolution(uint32_t resolution)
     switch (resolution)
     {
     case 8:
-        adc_precision = AM_HAL_ADC_SLOT_8BIT;
+        adc_precision_mode = AM_HAL_ADC_SLOT_8BIT;
+        adc_hardware_precision = 8;
+        adc_reporting_precision = 8;
         break;
 
     case 10:
-        adc_precision = AM_HAL_ADC_SLOT_10BIT;
+        adc_precision_mode = AM_HAL_ADC_SLOT_10BIT;
+        adc_hardware_precision = 10;
+        adc_reporting_precision = 10;
         break;
 
     case 12:
-        adc_precision = AM_HAL_ADC_SLOT_12BIT;
+        adc_precision_mode = AM_HAL_ADC_SLOT_12BIT;
+        adc_hardware_precision = 12;
+        adc_reporting_precision = 12;
         break;
 
     case 14:
-        adc_precision = AM_HAL_ADC_SLOT_14BIT;
+        adc_precision_mode = AM_HAL_ADC_SLOT_14BIT;
+        adc_hardware_precision = 14;
+        adc_reporting_precision = 14;
         break;
 
     default:
-        adc_precision = AM_HAL_ADC_SLOT_10BIT;
+        adc_precision_mode = AM_HAL_ADC_SLOT_14BIT;
+        adc_hardware_precision = 14;
+        adc_reporting_precision = resolution;
         break;
     }
 }
