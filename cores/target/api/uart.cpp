@@ -1,0 +1,234 @@
+/*
+ * BSD 3-Clause License
+ *
+ * Copyright (c) 2023, Northern Mechatronics, Inc.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its
+ *    contributors may be used to endorse or promote products derived from
+ *    this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include <am_mcu_apollo.h>
+#include <am_util.h>
+
+#include <FreeRTOS.h>
+
+#include "ArduinoAPI.h"
+#include "uart.h"
+
+Uart::Uart(uint32_t module, UartPinMap *pinMap) : mModule(module), mPinMap(pinMap)
+{
+}
+
+void Uart::begin(unsigned long baudrate)
+{
+    begin(baudrate, SERIAL_8N1);
+}
+
+void Uart::begin(unsigned long baudrate, uint16_t config)
+{
+    uint32_t data, parity, stop;
+    data   = config & SERIAL_DATA_MASK;
+    parity = config & SERIAL_PARITY_MASK;
+    stop   = config & SERIAL_STOP_BIT_MASK;
+
+    mConfig.ui32BaudRate = baudrate;
+    switch (data)
+    {
+    case SERIAL_DATA_5:
+        mConfig.ui32DataBits = AM_HAL_UART_DATA_BITS_5;
+        break;
+    case SERIAL_DATA_6:
+        mConfig.ui32DataBits = AM_HAL_UART_DATA_BITS_6;
+        break;
+    case SERIAL_DATA_7:
+        mConfig.ui32DataBits = AM_HAL_UART_DATA_BITS_7;
+        break;
+    case SERIAL_DATA_8:
+    default:
+        mConfig.ui32DataBits = AM_HAL_UART_DATA_BITS_8;
+        break;
+    }
+
+    switch (parity)
+    {
+    case SERIAL_PARITY_EVEN:
+        mConfig.ui32Parity = AM_HAL_UART_PARITY_EVEN;
+        break;
+    case SERIAL_PARITY_ODD:
+        mConfig.ui32Parity = AM_HAL_UART_PARITY_ODD;
+        break;
+    case SERIAL_PARITY_NONE:
+    default:
+        mConfig.ui32Parity = AM_HAL_UART_PARITY_NONE;
+        break;
+    }
+
+    switch (stop)
+    {
+    case SERIAL_STOP_BIT_2:
+        mConfig.ui32StopBits = AM_HAL_UART_TWO_STOP_BITS;
+        break;
+    case SERIAL_STOP_BIT_1:
+    default:
+        mConfig.ui32StopBits = AM_HAL_UART_ONE_STOP_BIT;
+        break;
+    }
+
+    if (mPinMap->cts_pin && mPinMap->rts_pin)
+    {
+        mConfig.ui32FlowControl = AM_HAL_UART_FLOW_CTRL_RTS_CTS;
+        am_hal_gpio_pinconfig(mPinMap->cts_pin, mPinMap->cts_pincfg);
+        am_hal_gpio_pinconfig(mPinMap->rts_pin, mPinMap->rts_pincfg);
+    }
+    else if (mPinMap->cts_pin)
+    {
+        mConfig.ui32FlowControl = AM_HAL_UART_FLOW_CTRL_CTS_ONLY;
+        am_hal_gpio_pinconfig(mPinMap->cts_pin, mPinMap->cts_pincfg);
+    }
+    else if (mPinMap->rts_pin)
+    {
+        mConfig.ui32FlowControl = AM_HAL_UART_FLOW_CTRL_RTS_ONLY;
+        am_hal_gpio_pinconfig(mPinMap->rts_pin, mPinMap->rts_pincfg);
+    }
+    else
+    {
+        mConfig.ui32FlowControl = AM_HAL_UART_FLOW_CTRL_NONE;
+    }
+    am_hal_gpio_pinconfig(mPinMap->tx_pin, mPinMap->tx_pincfg);
+    am_hal_gpio_pinconfig(mPinMap->rx_pin, mPinMap->rx_pincfg);
+
+    mConfig.ui32FifoLevels = AM_HAL_UART_TX_FIFO_3_4 | AM_HAL_UART_RX_FIFO_3_4;
+    mConfig.pui8TxBuffer = mTxBuffer;
+    mConfig.ui32TxBufferSize = sizeof(mTxBuffer);
+    mConfig.pui8RxBuffer = mRxBuffer;
+    mConfig.ui32RxBufferSize = sizeof(mRxBuffer);
+
+    am_hal_uart_initialize(mModule, &mUartHandle);
+    am_hal_uart_power_control(mUartHandle, AM_HAL_SYSCTRL_WAKE, false);
+    am_hal_uart_configure(mUartHandle, &mConfig);
+
+    NVIC_EnableIRQ((IRQn_Type)(UART0_IRQn + mModule));
+    NVIC_SetPriority((IRQn_Type)(UART0_IRQn + mModule), NVIC_configKERNEL_INTERRUPT_PRIORITY);
+}
+
+void Uart::end()
+{
+    am_hal_uart_power_control(mUartHandle, AM_HAL_SYSCTRL_DEEPSLEEP, false);
+    am_hal_uart_deinitialize(mUartHandle);
+
+    am_hal_gpio_pinconfig(mPinMap->tx_pin, g_AM_HAL_GPIO_DISABLE);
+    am_hal_gpio_pinconfig(mPinMap->rx_pin, g_AM_HAL_GPIO_DISABLE);
+    if (mPinMap->cts_pin && mPinMap->rts_pin)
+    {
+        am_hal_gpio_pinconfig(mPinMap->cts_pin, g_AM_HAL_GPIO_DISABLE);
+        am_hal_gpio_pinconfig(mPinMap->rts_pin, g_AM_HAL_GPIO_DISABLE);
+    }
+    else if (mPinMap->cts_pin)
+    {
+        am_hal_gpio_pinconfig(mPinMap->cts_pin, g_AM_HAL_GPIO_DISABLE);
+    }
+    else if (mPinMap->rts_pin)
+    {
+        am_hal_gpio_pinconfig(mPinMap->rts_pin, g_AM_HAL_GPIO_DISABLE);
+    }
+}
+
+int Uart::available(void)
+{
+    return 0;
+}
+
+int Uart::peek(void)
+{
+    return 0;
+}
+
+int Uart::read(void)
+{
+    xTaskNotifyWait(0, 1, NULL, portMAX_DELAY);
+    return 0;
+}
+
+void Uart::flush(void)
+{
+    am_hal_uart_tx_flush(mUartHandle);
+}
+
+size_t Uart::write(uint8_t c)
+{
+    return write(&c, 1);
+}
+
+size_t Uart::write(const uint8_t *buffer, size_t size)
+{
+    uint32_t ui32TotalBytesWritten = 0;
+    uint32_t ui32BytesWritten = 0;
+
+    const am_hal_uart_transfer_t transfer = {
+        .ui32Direction = AM_HAL_UART_WRITE,
+        .pui8Data = (uint8_t *)buffer,
+        .ui32NumBytes = size,
+        .ui32TimeoutMs = AM_HAL_UART_WAIT_FOREVER,
+        .pui32BytesTransferred = &ui32BytesWritten,
+    };
+
+    while (ui32TotalBytesWritten < size)
+    {
+        if (AM_HAL_STATUS_SUCCESS != am_hal_uart_transfer(mUartHandle, &transfer))
+        {
+            return ui32TotalBytesWritten;
+        }
+
+        ui32TotalBytesWritten += ui32BytesWritten;
+    }
+
+    return ui32TotalBytesWritten;
+}
+
+Uart::operator bool()
+{
+    return true;
+}
+
+void Uart::notify(void)
+{
+    BaseType_t bContextSwitch;
+
+    if (mTaskHandle)
+    {
+        if (xPortIsInsideInterrupt() == pdTRUE)
+        {
+            bContextSwitch = pdFALSE;
+            xTaskNotifyFromISR(mTaskHandle, 0, eNoAction, &bContextSwitch);
+            portYIELD_FROM_ISR(bContextSwitch);
+        }
+        else
+        {
+            xTaskNotify(mTaskHandle, 0, eNoAction);
+            portYIELD();
+        }
+    }
+}
