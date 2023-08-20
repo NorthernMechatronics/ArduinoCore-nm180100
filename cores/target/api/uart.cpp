@@ -39,6 +39,44 @@
 #include "ArduinoAPI.h"
 #include "uart.h"
 
+///////////////////////////////////////////////////////////////////////////////
+//
+// Redefinition of the private UART HAL state information from am_hal_uart.c
+//
+///////////////////////////////////////////////////////////////////////////////
+typedef struct
+{
+    bool bValid;
+    uint32_t regILPR;
+    uint32_t regIBRD;
+    uint32_t regFBRD;
+    uint32_t regLCRH;
+    uint32_t regCR;
+    uint32_t regIFLS;
+    uint32_t regIER;
+} am_hal_uart_register_state_t;
+
+typedef struct
+{
+    am_hal_handle_prefix_t prefix;
+    am_hal_uart_register_state_t sRegState;
+
+    uint32_t ui32Module;
+
+    bool bEnableTxQueue;
+    am_hal_queue_t sTxQueue;
+
+    bool bEnableRxQueue;
+    am_hal_queue_t sRxQueue;
+
+    uint32_t ui32BaudRate;
+
+    am_hal_uart_clock_speed_e  eUartClockSpeed ;
+}
+am_hal_uart_state_t;
+
+///////////////////////////////////////////////////////////////////////////////
+
 Uart::Uart(uint32_t module, UartPinMap *pinMap) : mModule(module), mPinMap(pinMap)
 {
 }
@@ -165,12 +203,32 @@ void Uart::end()
 
 int Uart::available(void)
 {
-    return 1;
+    am_hal_uart_state_t *state = (am_hal_uart_state_t *)mUartHandle;
+    am_hal_queue_t *queue = &state->sRxQueue;
+
+    return am_hal_queue_items_left(queue);
+}
+
+int Uart::availableForWrite(void)
+{
+    am_hal_uart_state_t *state = (am_hal_uart_state_t *)mUartHandle;
+    am_hal_queue_t *queue = &state->sTxQueue;
+
+    return am_hal_queue_slots_left(queue);
 }
 
 int Uart::peek(void)
 {
-    return 0;
+    am_hal_uart_state_t *state = (am_hal_uart_state_t *)mUartHandle;
+    am_hal_queue_t *queue = &state->sRxQueue;
+
+    if (am_hal_queue_empty(queue))
+    {
+        return -1;
+    }
+
+    int *item = (int *)am_hal_queue_peek(queue);
+    return *item;
 }
 
 int Uart::read(void)

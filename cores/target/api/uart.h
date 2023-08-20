@@ -61,6 +61,7 @@ public:
     void begin(unsigned long baudrate, uint16_t config);
     void end();
     int available(void);
+    int availableForWrite(void);
     int peek(void);
     int read(void);
     void flush(void);
