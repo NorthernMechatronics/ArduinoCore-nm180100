@@ -132,7 +132,7 @@ pin_size_t ct_assignment_get_by_outsel(uint32_t outsel)
 {
     for (int i = 0; i < CT_MAX; i++)
     {
-        if (ct_pinmap_tbl[i].outsel = outsel)
+        if (CT_OUTSEL_CMP(ct_pinmap_tbl[i].outsel, outsel))
         {
             return ct_pinmap_tbl[i].pin;
         }
