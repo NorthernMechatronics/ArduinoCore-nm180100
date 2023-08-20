@@ -267,14 +267,6 @@ void analogReadResolution(uint32_t resolution)
     }
 }
 
-void analogWrite(pin_size_t pinNumber, int value)
-{
-}
-
-void analogWriteResolution(uint32_t resolution)
-{
-}
-
 void am_adc_isr(void)
 {
     BaseType_t bContextSwitch = pdFALSE;

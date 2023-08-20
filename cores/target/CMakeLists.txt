@@ -28,6 +28,7 @@ target_sources(
     api/random.cpp
     api/time.c
     api/wiring_analog_read.c
+    api/wiring_analog_write.c
     api/wiring_digital.c
     api/wiring_shift.c
 
