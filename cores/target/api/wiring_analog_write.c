@@ -75,7 +75,7 @@ void analogWrite(pin_size_t pinNumber, int value)
         am_hal_ctimer_config_single(
             num,
             ctimer_segment,
-            (AM_HAL_CTIMER_FN_PWM_REPEAT | AM_HAL_CTIMER_HFRC_12KHZ)
+            (AM_HAL_CTIMER_FN_PWM_REPEAT | AM_HAL_CTIMER_HFRC_187_5KHZ)
         );
         am_hal_ctimer_period_set(num, ctimer_segment, pwm_period, value);
         am_hal_ctimer_aux_period_set(num, ctimer_segment, pwm_period, value);
