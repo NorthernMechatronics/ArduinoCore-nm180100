@@ -143,7 +143,9 @@ void system_setup(void)
     am_hal_pwrctrl_low_power_init();
     am_hal_rtc_osc_disable();
 
+    NVIC_EnableIRQ(ADC_IRQn);
     NVIC_EnableIRQ(GPIO_IRQn);
+    NVIC_SetPriority(ADC_IRQn, NVIC_configKERNEL_INTERRUPT_PRIORITY);
     NVIC_SetPriority(GPIO_IRQn, NVIC_configKERNEL_INTERRUPT_PRIORITY);
     NVIC_SetPriority(STIMER_CMPR2_IRQn, NVIC_configKERNEL_INTERRUPT_PRIORITY);
     NVIC_SetPriority(STIMER_CMPR3_IRQn, NVIC_configKERNEL_INTERRUPT_PRIORITY);
