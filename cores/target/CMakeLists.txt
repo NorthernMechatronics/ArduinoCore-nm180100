@@ -24,6 +24,7 @@ target_sources(
     ${CORE_DIR}/Stream.cpp
     ${CORE_DIR}/String.cpp
 
+    api/ctimer.c
     api/interrupts.c
     api/random.cpp
     api/time.c
