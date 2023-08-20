@@ -53,7 +53,7 @@ typedef struct adc_channel_pincfg_s
 } adc_channel_pincfg_t;
 
 static void *adc_handle;
-static am_hal_adc_refsel_e adc_reference;
+static am_hal_adc_refsel_e adc_reference = AM_HAL_ADC_REFSEL_INT_2P0;
 static am_hal_adc_slot_prec_e adc_precision = AM_HAL_ADC_SLOT_10BIT;
 static adc_slot_control_t adc_slot_control;
 static adc_channel_pincfg_t adc_channel_pinmap[ADC_MAX_CHANNEL] =
@@ -206,6 +206,24 @@ int analogRead(pin_size_t pinNumber)
     memset(&adc_slot_control, 0, sizeof(adc_slot_control_t));
 
     return sample;
+}
+
+void analogReference(uint8_t mode)
+{
+    switch (mode)
+    {
+    case AM_HAL_ADC_REFSEL_INT_1P5:
+        adc_reference = mode;
+        break;
+
+    case AM_HAL_ADC_REFSEL_INT_2P0:
+        adc_reference = mode;
+        break;
+
+    default:
+        adc_reference = AM_HAL_ADC_REFSEL_INT_2P0;
+        break;
+    }
 }
 
 void analogReadResolution(uint32_t resolution)
