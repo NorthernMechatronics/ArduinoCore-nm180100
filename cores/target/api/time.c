@@ -46,3 +46,8 @@ void delayMicroseconds(unsigned int us)
 {
     am_util_delay_us(us);
 }
+
+unsigned long millis(void)
+{
+    return ((xTaskGetTickCount() * 1000) / configTICK_RATE_HZ);
+}
