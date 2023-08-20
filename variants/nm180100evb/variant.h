@@ -29,58 +29,22 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _UART_H_
-#define _UART_H_
+#ifndef _VARIANT_H_
+#define _VARIANT_H_
 
-#include <am_mcu_apollo.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#include <FreeRTOS.h>
-#include <task.h>
+#ifdef __cplusplus
+}
+#endif
 
-#include "HardwareSerial.h"
+#ifdef __cplusplus
+#include "uart.h"
 
-#define UART_BUFFER_SIZE    (1024)
+extern Uart Serial;
 
-struct UartPinMap
-{
-    uint32_t tx_pin;
-    uint32_t rx_pin;
-    uint32_t cts_pin;
-    uint32_t rts_pin;
-    am_hal_gpio_pincfg_t tx_pincfg;
-    am_hal_gpio_pincfg_t rx_pincfg;
-    am_hal_gpio_pincfg_t cts_pincfg;
-    am_hal_gpio_pincfg_t rts_pincfg;
-};
-
-class Uart : public arduino::HardwareSerial
-{
-public:
-    Uart(uint32_t module, UartPinMap *pinMap);
-    void begin(unsigned long);
-    void begin(unsigned long baudrate, uint16_t config);
-    void end();
-    int available(void);
-    int peek(void);
-    int read(void);
-    void flush(void);
-    size_t write(uint8_t c);
-    size_t write(const uint8_t *buffer, size_t size);
-    operator bool();
-
-    using Print::write; // pull in write(str) and write(buf, size) from Print
-
-    void isr(void);
-protected:
-    uint8_t mTxBuffer[UART_BUFFER_SIZE];
-    uint8_t mRxBuffer[UART_BUFFER_SIZE];
-
-private:
-    uint32_t mModule;
-    am_hal_uart_config_t mConfig;
-    UartPinMap *mPinMap;
-    void *mUartHandle;
-    TaskHandle_t mTaskHandle;
-};
+#endif
 
 #endif

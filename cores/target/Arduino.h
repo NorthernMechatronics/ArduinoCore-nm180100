@@ -33,6 +33,7 @@
 #define _ARDUINO_H_
 
 #include "ArduinoAPI.h"
+#include "variant.h"
 
 #ifdef __cplusplus
 extern "C"

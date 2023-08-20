@@ -34,6 +34,7 @@
 #include <am_util.h>
 
 #include <FreeRTOS.h>
+#include <task.h>
 
 #include "ArduinoAPI.h"
 #include "uart.h"
@@ -100,25 +101,19 @@ void Uart::begin(unsigned long baudrate, uint16_t config)
     if (mPinMap->cts_pin && mPinMap->rts_pin)
     {
         mConfig.ui32FlowControl = AM_HAL_UART_FLOW_CTRL_RTS_CTS;
-        am_hal_gpio_pinconfig(mPinMap->cts_pin, mPinMap->cts_pincfg);
-        am_hal_gpio_pinconfig(mPinMap->rts_pin, mPinMap->rts_pincfg);
     }
     else if (mPinMap->cts_pin)
     {
         mConfig.ui32FlowControl = AM_HAL_UART_FLOW_CTRL_CTS_ONLY;
-        am_hal_gpio_pinconfig(mPinMap->cts_pin, mPinMap->cts_pincfg);
     }
     else if (mPinMap->rts_pin)
     {
         mConfig.ui32FlowControl = AM_HAL_UART_FLOW_CTRL_RTS_ONLY;
-        am_hal_gpio_pinconfig(mPinMap->rts_pin, mPinMap->rts_pincfg);
     }
     else
     {
         mConfig.ui32FlowControl = AM_HAL_UART_FLOW_CTRL_NONE;
     }
-    am_hal_gpio_pinconfig(mPinMap->tx_pin, mPinMap->tx_pincfg);
-    am_hal_gpio_pinconfig(mPinMap->rx_pin, mPinMap->rx_pincfg);
 
     mConfig.ui32FifoLevels = AM_HAL_UART_TX_FIFO_3_4 | AM_HAL_UART_RX_FIFO_3_4;
     mConfig.pui8TxBuffer = mTxBuffer;
@@ -130,8 +125,20 @@ void Uart::begin(unsigned long baudrate, uint16_t config)
     am_hal_uart_power_control(mUartHandle, AM_HAL_SYSCTRL_WAKE, false);
     am_hal_uart_configure(mUartHandle, &mConfig);
 
+    am_hal_uart_interrupt_enable(mUartHandle, AM_HAL_UART_INT_RX);
     NVIC_EnableIRQ((IRQn_Type)(UART0_IRQn + mModule));
     NVIC_SetPriority((IRQn_Type)(UART0_IRQn + mModule), NVIC_configKERNEL_INTERRUPT_PRIORITY);
+
+    am_hal_gpio_pinconfig(mPinMap->tx_pin, mPinMap->tx_pincfg);
+    am_hal_gpio_pinconfig(mPinMap->rx_pin, mPinMap->rx_pincfg);
+    if (mPinMap->cts_pin)
+    {
+        am_hal_gpio_pinconfig(mPinMap->cts_pin, mPinMap->cts_pincfg);
+    }
+    if (mPinMap->rts_pin)
+    {
+        am_hal_gpio_pinconfig(mPinMap->rts_pin, mPinMap->rts_pincfg);
+    }
 }
 
 void Uart::end()
@@ -158,7 +165,7 @@ void Uart::end()
 
 int Uart::available(void)
 {
-    return 0;
+    return 1;
 }
 
 int Uart::peek(void)
@@ -168,8 +175,29 @@ int Uart::peek(void)
 
 int Uart::read(void)
 {
-    xTaskNotifyWait(0, 1, NULL, portMAX_DELAY);
-    return 0;
+    uint8_t ui8Byte = 0;
+    uint32_t ui32BytesRead = 0;
+
+    const am_hal_uart_transfer_t transfer = {
+        .ui32Direction = AM_HAL_UART_READ,
+        .pui8Data = (uint8_t *)&ui8Byte,
+        .ui32NumBytes = 1,
+        .ui32TimeoutMs = AM_HAL_UART_WAIT_FOREVER,
+        .pui32BytesTransferred = &ui32BytesRead,
+    };
+
+    mTaskHandle = xTaskGetCurrentTaskHandle();
+    do
+    {
+        am_hal_uart_transfer(mUartHandle, &transfer);
+        if (ui32BytesRead == 0)
+        {
+            xTaskNotifyWait(0, 1, NULL, portMAX_DELAY);
+        }
+    } while (ui32BytesRead == 0);
+    mTaskHandle = 0;
+
+    return ui8Byte;
 }
 
 void Uart::flush(void)
@@ -213,22 +241,21 @@ Uart::operator bool()
     return true;
 }
 
-void Uart::notify(void)
+void Uart::isr(void)
 {
     BaseType_t bContextSwitch;
 
+    uint32_t ui32Status;
+    uint32_t ui32UartIdle;
+
+    am_hal_uart_interrupt_status_get(mUartHandle, &ui32Status, true);
+    am_hal_uart_interrupt_clear(mUartHandle, ui32Status);
+    am_hal_uart_interrupt_service(mUartHandle, ui32Status, &ui32UartIdle);
+
     if (mTaskHandle)
     {
-        if (xPortIsInsideInterrupt() == pdTRUE)
-        {
-            bContextSwitch = pdFALSE;
-            xTaskNotifyFromISR(mTaskHandle, 0, eNoAction, &bContextSwitch);
-            portYIELD_FROM_ISR(bContextSwitch);
-        }
-        else
-        {
-            xTaskNotify(mTaskHandle, 0, eNoAction);
-            portYIELD();
-        }
+        bContextSwitch = pdFALSE;
+        xTaskNotifyFromISR(mTaskHandle, 0, eNoAction, &bContextSwitch);
+        portEND_SWITCHING_ISR(bContextSwitch);
     }
 }

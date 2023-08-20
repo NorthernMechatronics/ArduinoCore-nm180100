@@ -5,6 +5,7 @@ set(CORE_DIR ${PROJECT_SOURCE_DIR}/arduino/api)
 set(CORE_INCLUDES
     ${CORE_DIR}
     ${CMAKE_CURRENT_LIST_DIR}
+    ${CMAKE_CURRENT_LIST_DIR}/api
     CACHE PATH "CORE includes"
 )
 

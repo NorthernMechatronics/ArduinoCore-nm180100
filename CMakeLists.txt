@@ -47,6 +47,7 @@ target_sources(
     PRIVATE
     ${PROJECT_SOURCE_DIR}/variants/${BOARD}/startup_gcc.c
     ${PROJECT_SOURCE_DIR}/variants/${BOARD}/main.c
+    ${PROJECT_SOURCE_DIR}/variants/${BOARD}/serial.cpp
     ${PROJECT_SOURCE_DIR}/test/test_sketch.cpp
 )
 
