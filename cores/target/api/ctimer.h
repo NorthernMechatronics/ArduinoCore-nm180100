@@ -54,6 +54,8 @@ pin_size_t ct_assignment_get_by_outsel(uint32_t outsel);
 uint32_t ct_assignment_get_by_pin(pin_size_t pinNumber);
 uint32_t ct_assignment_get_by_timer(uint32_t timer);
 uint32_t ct_assign(pin_size_t pinNumber);
+void ct_start(uint32_t outsel);
+void ct_stop(uint32_t outsel);
 
 #ifdef __cplusplus
 }

@@ -173,3 +173,19 @@ uint32_t ct_assign(pin_size_t pinNumber)
 
     return CT_ERROR;
 }
+
+void ct_start(uint32_t outsel)
+{
+    uint8_t seg, num;
+    seg = CT_OUTSEL_SEG(outsel);
+    num = CT_OUTSEL_NUM(outsel);
+    am_hal_ctimer_start(num, seg);
+}
+
+void ct_stop(uint32_t outsel)
+{
+    uint8_t seg, num;
+    seg = CT_OUTSEL_SEG(outsel);
+    num = CT_OUTSEL_NUM(outsel);
+    am_hal_ctimer_stop(num, seg);
+}
