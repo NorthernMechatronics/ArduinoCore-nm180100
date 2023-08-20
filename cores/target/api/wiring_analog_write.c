@@ -46,11 +46,11 @@ void analogWrite(pin_size_t pinNumber, int value)
     {
         outsel = ct_assign(pinNumber);
     }
+    ct_stop(outsel);
+
     seg = CT_OUTSEL_SEG(outsel);
     num = CT_OUTSEL_NUM(outsel);
     reg = CT_OUTSEL_REG(outsel);
-
-    am_hal_ctimer_stop(num, seg);
 
     if (value == 0)
     {
@@ -64,30 +64,22 @@ void analogWrite(pin_size_t pinNumber, int value)
     }
     else
     {
-        if (seg == 0)
-        {
-            seg = AM_HAL_CTIMER_TIMERA;
-        }
-        else
-        {
-            seg = AM_HAL_CTIMER_TIMERB;
-        }
-
+        uint32_t ctimer_segment = seg ? AM_HAL_CTIMER_TIMERB : AM_HAL_CTIMER_TIMERA;
         am_hal_ctimer_output_config(
             num,
-            seg,
+            ctimer_segment,
             pinNumber,
             AM_HAL_CTIMER_OUTPUT_NORMAL,
             AM_HAL_GPIO_PIN_DRIVESTRENGTH_2MA
         );
         am_hal_ctimer_config_single(
             num,
-            seg,
+            ctimer_segment,
             (AM_HAL_CTIMER_FN_PWM_REPEAT | AM_HAL_CTIMER_HFRC_12KHZ)
         );
-        am_hal_ctimer_period_set(num, seg, pwm_period, value);
-        am_hal_ctimer_aux_period_set(num, seg, pwm_period, value);
-        am_hal_ctimer_start(num, seg);
+        am_hal_ctimer_period_set(num, ctimer_segment, pwm_period, value);
+        am_hal_ctimer_aux_period_set(num, ctimer_segment, pwm_period, value);
+        am_hal_ctimer_start(num, ctimer_segment);
     }
 }
 

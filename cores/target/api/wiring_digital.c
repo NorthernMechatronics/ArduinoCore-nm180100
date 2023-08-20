@@ -33,8 +33,19 @@
 #include <am_mcu_apollo.h>
 
 #include "ArduinoAPI.h"
+#include "ctimer.h"
 
 static am_hal_gpio_pincfg_t gpio_pincfg[AM_HAL_GPIO_MAX_PADS] = { 0 };
+
+static void pin_stop_clock(pin_size_t pin)
+{
+    uint32_t timer = ct_find_timer(pin);
+    uint32_t outsel = ct_assignment_get_by_timer(timer);
+    if (outsel != CT_UNUSED)
+    {
+        ct_stop(outsel);
+    }
+}
 
 void pinMode(pin_size_t pin, PinMode mode)
 {
@@ -55,11 +66,13 @@ void pinMode(pin_size_t pin, PinMode mode)
     }
 
     gpio_pincfg[pin] = pincfg;
+    pin_stop_clock(pin);
     am_hal_gpio_pinconfig(pin, pincfg);
 }
 
 void digitalWrite(pin_size_t pin, PinStatus val)
 {
+    pin_stop_clock(pin);
     am_hal_gpio_state_write(pin,
             val == HIGH ?
             AM_HAL_GPIO_OUTPUT_SET :
@@ -68,6 +81,7 @@ void digitalWrite(pin_size_t pin, PinStatus val)
 
 void digitalToggle(pin_size_t pin)
 {
+    pin_stop_clock(pin);
     am_hal_gpio_state_write(pin, AM_HAL_GPIO_OUTPUT_TOGGLE);
 }
 
@@ -75,6 +89,7 @@ PinStatus digitalRead(pin_size_t pin)
 {
     uint32_t state;
 
+    pin_stop_clock(pin);
     if (memcmp(&gpio_pincfg[pin], &g_AM_HAL_GPIO_OUTPUT_WITH_READ, 4) == 0)
     {
         am_hal_gpio_state_read(pin, AM_HAL_GPIO_OUTPUT_READ, &state);
@@ -96,6 +111,7 @@ static uint32_t configInterrupt(pin_size_t pin, PinStatus mode)
 {
     am_hal_gpio_intdir_e intdir;
 
+    pin_stop_clock(pin);
     switch (mode)
     {
     case FALLING:
@@ -151,6 +167,7 @@ void attachInterruptParam(pin_size_t pin, voidFuncPtrParam callback, PinStatus m
 
 void detachInterrupt(pin_size_t pin)
 {
+    pin_stop_clock(pin);
     AM_HAL_GPIO_MASKCREATE(GpioIntMask);
     AM_HAL_GPIO_MASKBIT(pGpioIntMask, pin);
     am_hal_gpio_interrupt_disable(pGpioIntMask);
