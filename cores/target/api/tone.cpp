@@ -41,8 +41,62 @@ extern "C" {
 
 void tone(uint8_t _pin, unsigned int frequency, unsigned long duration)
 {
+    uint32_t seg, num, reg;
+
+    uint32_t timer = ct_find_timer(_pin);
+    if (timer == CT_ERROR)
+    {
+        return;
+    }
+
+    uint32_t outsel = ct_assignment_get_by_timer(timer);
+    if (outsel == CT_UNUSED)
+    {
+        outsel = ct_assign(_pin);
+    }
+    ct_stop(outsel);
+
+    seg = CT_OUTSEL_SEG(outsel);
+    num = CT_OUTSEL_NUM(outsel);
+    reg = CT_OUTSEL_REG(outsel);
+
+    uint32_t ctimer_segment = seg ? AM_HAL_CTIMER_TIMERB : AM_HAL_CTIMER_TIMERA;
+    am_hal_ctimer_output_config(
+        num,
+        ctimer_segment,
+        _pin,
+        AM_HAL_CTIMER_OUTPUT_NORMAL,
+        AM_HAL_GPIO_PIN_DRIVESTRENGTH_2MA
+    );
+    am_hal_ctimer_config_single(
+        num,
+        ctimer_segment,
+        (AM_HAL_CTIMER_FN_PWM_REPEAT | AM_HAL_CTIMER_HFRC_3MHZ)
+    );
+
+    uint32_t period, duty_cycle;
+    period = 3e6 / frequency;
+    duty_cycle = period >> 1;
+
+    am_hal_ctimer_period_set(num, ctimer_segment, period, duty_cycle);
+    am_hal_ctimer_aux_period_set(num, ctimer_segment, period, duty_cycle);
+
+    am_hal_ctimer_start(num, ctimer_segment);
 }
 
 void noTone(uint8_t _pin)
 {
+    uint32_t seg, num, reg;
+
+    uint32_t timer = ct_find_timer(_pin);
+    if (timer == CT_ERROR)
+    {
+        return;
+    }
+
+    uint32_t outsel = ct_assignment_get_by_timer(timer);
+    if (outsel != CT_UNUSED)
+    {
+        ct_stop(outsel);
+    }
 }

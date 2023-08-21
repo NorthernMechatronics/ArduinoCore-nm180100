@@ -40,6 +40,11 @@ static am_hal_gpio_pincfg_t gpio_pincfg[AM_HAL_GPIO_MAX_PADS] = { 0 };
 static void pin_stop_clock(pin_size_t pin)
 {
     uint32_t timer = ct_find_timer(pin);
+    if (timer == CT_ERROR)
+    {
+        return;
+    }
+
     uint32_t outsel = ct_assignment_get_by_timer(timer);
     if (outsel != CT_UNUSED)
     {

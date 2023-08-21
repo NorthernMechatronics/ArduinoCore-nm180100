@@ -40,7 +40,13 @@ static uint32_t pwm_period = 255;
 void analogWrite(pin_size_t pinNumber, int value)
 {
     uint32_t seg, num, reg;
+
     uint32_t timer = ct_find_timer(pinNumber);
+    if (timer == CT_ERROR)
+    {
+        return;
+    }
+
     uint32_t outsel = ct_assignment_get_by_timer(timer);
     if (outsel == CT_UNUSED)
     {
