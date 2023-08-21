@@ -32,6 +32,14 @@
 #ifndef _USER_TASK_H_
 #define _USER_TASK_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 extern void user_task_create(uint32_t priority);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
