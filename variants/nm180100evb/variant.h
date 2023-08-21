@@ -33,6 +33,20 @@
 #define _VARIANT_H_
 
 #ifdef __cplusplus
+
+#include "uart.h"
+
+namespace arduino {
+
+extern Uart Serial;
+extern Uart Serial1;
+
+}
+
+#endif
+
+
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -40,14 +54,6 @@ extern "C" {
 
 #ifdef __cplusplus
 }
-#endif
-
-#ifdef __cplusplus
-#include "uart.h"
-
-extern Uart Serial;
-extern Uart Serial1;
-
 #endif
 
 #endif
