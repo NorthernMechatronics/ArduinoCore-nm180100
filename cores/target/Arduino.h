@@ -40,6 +40,8 @@ extern "C"
 {
 #endif
 
+void digitalToggle(pin_size_t);
+
 void analogReadResolution(uint32_t mode);
 void analogWriteResolution(uint32_t mode);
 
