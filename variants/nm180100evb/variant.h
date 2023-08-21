@@ -36,6 +36,8 @@
 extern "C" {
 #endif
 
+#define LED_BUILTIN     (17u)
+
 #ifdef __cplusplus
 }
 #endif
