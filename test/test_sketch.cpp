@@ -29,17 +29,16 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include <ArduinoAPI.h>
+
+#include <Arduino.h>
+
+using namespace arduino;
 
 void setup(void)
 {
-    pinMode(10, OUTPUT);
-    pinMode(16, INPUT);
-    digitalWrite(10, LOW);
 }
 
 void loop(void)
 {
-    PinStatus state = digitalRead(16);
-    digitalWrite(10, state);
+    delay(1000);
 }
