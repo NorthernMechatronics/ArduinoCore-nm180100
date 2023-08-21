@@ -32,13 +32,41 @@
 #ifndef _SPI_H_
 #define _SPI_H_
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include <am_mcu_apollo.h>
+
+#ifdef __cplusplus
+}
+#endif
+
+#include <FreeRTOS.h>
+#include <semphr.h>
+
 #include "HardwareSPI.h"
 
 namespace arduino {
 
+struct SpiPinMap
+{
+    uint32_t mosi_pin;
+    uint32_t miso_pin;
+    uint32_t sck_pin;
+    uint32_t nce_pin;
+    uint32_t nce_channel;
+    am_hal_gpio_pincfg_t mosi_pincfg;
+    am_hal_gpio_pincfg_t miso_pincfg;
+    am_hal_gpio_pincfg_t sck_pincfg;
+    am_hal_gpio_pincfg_t nce_pincfg;
+};
+
 class nmSPI : public HardwareSPI
 {
 public:
+    nmSPI(uint32_t module, SpiPinMap *pinMap);
+
     virtual uint8_t transfer(uint8_t data);
     virtual uint16_t transfer16(uint16_t data);
     virtual void transfer(void *buf, size_t count);
@@ -55,6 +83,13 @@ public:
 
     virtual void begin();
     virtual void end();
+
+private:
+    uint32_t mModule;
+    am_hal_iom_config_t mConfig;
+    SpiPinMap *mPinMap;
+    void *mIomHandle;
+    SemaphoreHandle_t mMutex;
 };
 
 }

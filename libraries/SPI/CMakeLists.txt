@@ -11,6 +11,7 @@ target_include_directories(
     spi PRIVATE
     ${CORE_INCLUDES}
     ${HAL_INCLUDES}
+    ${RTOS_INCLUDES}
     ${SPI_INCLUDES}
 )
 
