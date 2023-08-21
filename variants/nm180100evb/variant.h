@@ -35,11 +35,14 @@
 #ifdef __cplusplus
 
 #include "uart.h"
+#include "SPI.h"
 
 namespace arduino {
 
 extern Uart Serial;
 extern Uart Serial1;
+
+extern nmSPI SPI;
 
 }
 

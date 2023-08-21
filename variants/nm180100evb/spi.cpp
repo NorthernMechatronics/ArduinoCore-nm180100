@@ -30,31 +30,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "variant.h"
-#include "uart.h"
+#include "spi.h"
 
 namespace arduino {
 
-static UartPinMap PinMap = {
-    .tx_pin = 22,
-    .rx_pin = 23,
-    .cts_pin = 0,
-    .rts_pin = 0,
-    .tx_pincfg = {
-        .uFuncSel = AM_HAL_PIN_22_UART0TX,
-        .eDriveStrength = AM_HAL_GPIO_PIN_DRIVESTRENGTH_2MA
+static SpiPinMap PinMap = {
+    .mosi_pin = 7,
+    .miso_pin = 6,
+    .sck_pin = 5,
+    .nce_pin = 11,
+    .mosi_pincfg = {
+        .uFuncSel            = AM_HAL_PIN_7_M0MOSI,
+        .eDriveStrength      = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA,
+        .uIOMnum             = 0
     },
-    .rx_pincfg = {
-        .uFuncSel = AM_HAL_PIN_23_UART0RX
+    .miso_pincfg = {
+        .uFuncSel            = AM_HAL_PIN_6_M0MISO,
+        .uIOMnum             = 0
     },
-    .cts_pincfg = { 0 },
-    .rts_pincfg = { 0 },
+    .sck_pincfg = {
+        .uFuncSel            = AM_HAL_PIN_5_M0SCK,
+        .eDriveStrength      = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA,
+        .uIOMnum             = 0
+    },
+    .nce_pincfg = {
+        .uFuncSel = AM_HAL_PIN_11_NCE11,
+        .eDriveStrength = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA,
+        .eGPOutcfg = AM_HAL_GPIO_PIN_OUTCFG_PUSHPULL,
+        .eGPInput            = AM_HAL_GPIO_PIN_INPUT_NONE,
+        .eIntDir             = AM_HAL_GPIO_PIN_INTDIR_LO2HI,
+        .uIOMnum             = 0,
+        .uNCE                = 0,
+        .eCEpol              = AM_HAL_GPIO_PIN_CEPOL_ACTIVELOW
+    },
 };
 
-Uart Serial(0, &PinMap);
+nmSPI SPI(0, &PinMap);
 
-}
-
-extern "C" void am_uart_isr(void)
-{
-    arduino::Serial.isr();
 }

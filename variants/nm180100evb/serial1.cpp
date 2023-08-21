@@ -33,7 +33,7 @@
 
 namespace arduino {
 
-static UartPinMap Serial1PinMap = {
+static UartPinMap PinMap = {
     .tx_pin = 35,
     .rx_pin = 36,
     .cts_pin = 0,
@@ -49,7 +49,7 @@ static UartPinMap Serial1PinMap = {
     .rts_pincfg = { 0 },
 };
 
-Uart Serial1(1, &Serial1PinMap);
+Uart Serial1(1, &PinMap);
 
 }
 

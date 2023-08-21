@@ -17,8 +17,8 @@ add_library(arduino STATIC $<TARGET_OBJECTS:hal> $<TARGET_OBJECTS:rtos> $<TARGET
 target_link_libraries(
     ${APPLICATION}
     PRIVATE
-        arduino
         spi
+        arduino
     PUBLIC
         -T${PROJECT_SOURCE_DIR}/variants/${BOARD}/AMA3B1KK.ld
         -Wl,--start-group
@@ -53,6 +53,7 @@ target_sources(
     ${PROJECT_SOURCE_DIR}/variants/${BOARD}/main.c
     ${PROJECT_SOURCE_DIR}/variants/${BOARD}/serial.cpp
     ${PROJECT_SOURCE_DIR}/variants/${BOARD}/serial1.cpp
+    ${PROJECT_SOURCE_DIR}/variants/${BOARD}/spi.cpp
     ${PROJECT_SOURCE_DIR}/test/test_sketch.cpp
 )
 
