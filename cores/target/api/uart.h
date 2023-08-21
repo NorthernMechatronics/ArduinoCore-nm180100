@@ -47,6 +47,8 @@ extern "C" {
 
 #include "HardwareSerial.h"
 
+namespace arduino {
+
 #define UART_BUFFER_SIZE    (1024)
 
 struct UartPinMap
@@ -61,7 +63,7 @@ struct UartPinMap
     am_hal_gpio_pincfg_t rts_pincfg;
 };
 
-class Uart : public arduino::HardwareSerial
+class Uart : public HardwareSerial
 {
 public:
     Uart(uint32_t module, UartPinMap *pinMap);
@@ -80,6 +82,7 @@ public:
     using Print::write; // pull in write(str) and write(buf, size) from Print
 
     virtual void isr(void);
+
 protected:
     uint8_t mTxBuffer[UART_BUFFER_SIZE];
     uint8_t mRxBuffer[UART_BUFFER_SIZE];
@@ -91,5 +94,7 @@ private:
     void *mUartHandle;
     TaskHandle_t mTaskHandle;
 };
+
+}
 
 #endif

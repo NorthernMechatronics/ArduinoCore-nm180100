@@ -33,6 +33,8 @@
 #include "ArduinoAPI.h"
 #include "uart.h"
 
+using namespace arduino;
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // Redefinition of the private UART HAL state information from am_hal_uart.c
