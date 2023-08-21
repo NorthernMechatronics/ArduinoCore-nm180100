@@ -6,18 +6,19 @@ get_filename_component(APPLICATION ${CMAKE_CURRENT_SOURCE_DIR} NAME_WE)
 set(TARGET "nm180100" CACHE STRING "" FORCE)
 set(BOARD "nm180100evb" CACHE STRING "" FORCE)
 
-add_subdirectory(cores)
-
 project(${APPLICATION})
 
-add_library(arduino STATIC $<TARGET_OBJECTS:hal> $<TARGET_OBJECTS:rtos> $<TARGET_OBJECTS:core>)
+add_subdirectory(cores)
+add_subdirectory(libraries/SPI)
 
 add_executable(${APPLICATION})
+add_library(arduino STATIC $<TARGET_OBJECTS:hal> $<TARGET_OBJECTS:rtos> $<TARGET_OBJECTS:core>)
 
 target_link_libraries(
     ${APPLICATION}
     PRIVATE
         arduino
+        spi
     PUBLIC
         -T${PROJECT_SOURCE_DIR}/variants/${BOARD}/AMA3B1KK.ld
         -Wl,--start-group
@@ -40,6 +41,8 @@ target_include_directories(
     ${RTOS_INCLUDES}
     ${CORE_INCLUDES}
     ${PROJECT_SOURCE_DIR}/variants/${BOARD}
+
+    ${SPI_INCLUDES}
 )
 
 target_sources(
@@ -59,6 +62,6 @@ add_custom_command(
 )
 
 add_dependencies(arduino hal rtos core)
-add_dependencies(${APPLICATION} arduino)
+add_dependencies(${APPLICATION} arduino spi)
 
 install(TARGETS arduino DESTINATION ${PROJECT_SOURCE_DIR}/variants/${BOARD}/lib)
