@@ -65,21 +65,21 @@ class Uart : public arduino::HardwareSerial
 {
 public:
     Uart(uint32_t module, UartPinMap *pinMap);
-    void begin(unsigned long);
-    void begin(unsigned long baudrate, uint16_t config);
-    void end();
-    int available(void);
-    int availableForWrite(void);
-    int peek(void);
-    int read(void);
-    void flush(void);
-    size_t write(uint8_t c);
-    size_t write(const uint8_t *buffer, size_t size);
-    operator bool();
+    virtual void begin(unsigned long);
+    virtual void begin(unsigned long baudrate, uint16_t config);
+    virtual void end();
+    virtual int available(void);
+    virtual int availableForWrite(void);
+    virtual int peek(void);
+    virtual int read(void);
+    virtual void flush(void);
+    virtual size_t write(uint8_t c);
+    virtual size_t write(const uint8_t *buffer, size_t size);
+    virtual operator bool();
 
     using Print::write; // pull in write(str) and write(buf, size) from Print
 
-    void isr(void);
+    virtual void isr(void);
 protected:
     uint8_t mTxBuffer[UART_BUFFER_SIZE];
     uint8_t mRxBuffer[UART_BUFFER_SIZE];
