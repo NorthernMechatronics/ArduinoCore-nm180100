@@ -30,7 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "variant.h"
-#include "spi.h"
+#include "SPI.h"
 
 namespace arduino {
 
