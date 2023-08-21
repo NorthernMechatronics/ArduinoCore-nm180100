@@ -1,0 +1,5 @@
+segger.name=NM180100 SWD
+segger.communication=usb
+segger.protocol=swd
+segger.program.protocol=swd
+segger.program.tool=jlink

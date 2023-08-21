@@ -1,0 +1,24 @@
+nm180100evb.name=NM180100 Evaluation Board
+
+nm180100evb.vid.0 = 0x1366
+nm180100evb.pid.0 = 0x0105
+
+nm180100evb.build.arch=apollo3
+nm180100evb.build.device=AMA3B1KK-KBR
+nm180100evb.build.mcu=cortex-m4
+nm180100evb.build.fpu=fpv4-sp-d16
+nm180100evb.build.fabi=hard
+nm180100evb.build.f_cpu=48000000L
+nm180100evb.build.board=NM180100EVB
+nm180100evb.build.variant=NM180100EVB
+nm180100evb.build.variant.path={runtime.platform.path}/variants/nm180100evb
+nm180100evb.build.core=arduino
+nm180100evb.build.defines=
+nm180100evb.build.includes=
+nm180100evb.build.libs=-larm_cortexM4lf_math
+nm180100evb.build.ldscript={runtime.platform.path}/variants/nm180100evb/AMA3B1KK.ld
+nm180100evb.build.vid = 0x1366
+nm180100evb.build.pid = 0x0105
+
+nm180100evb.upload.tool=jlink
+nm180100evb.upload.protocol=jlink
