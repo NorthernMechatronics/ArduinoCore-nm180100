@@ -36,7 +36,7 @@
 
 namespace arduino {
 
-class SPIClassNM : public HardwareSPI
+class nmSPI : public HardwareSPI
 {
 public:
     virtual uint8_t transfer(uint8_t data);

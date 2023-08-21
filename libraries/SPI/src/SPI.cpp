@@ -30,5 +30,53 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "ArduinoAPI.h"
 #include "SPI.h"
+#include "ArduinoAPI.h"
+
+using namespace arduino;
+
+void nmSPI::begin()
+{
+}
+
+void nmSPI::end()
+{
+}
+
+uint8_t nmSPI::transfer(uint8_t data)
+{
+    return 0;
+}
+
+uint16_t nmSPI::transfer16(uint16_t data)
+{
+    return 0;
+}
+
+void nmSPI::transfer(void *buf, size_t count)
+{
+}
+
+void nmSPI::usingInterrupt(int interruptNumber)
+{
+}
+
+void nmSPI::notUsingInterrupt(int interruptNumber)
+{
+}
+
+void nmSPI::beginTransaction(SPISettings settings)
+{
+}
+
+void nmSPI::endTransaction(void)
+{
+}
+
+void nmSPI::attachInterrupt()
+{
+}
+
+void nmSPI::detachInterrupt()
+{
+}
