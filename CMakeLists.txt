@@ -48,6 +48,7 @@ target_include_directories(
 target_sources(
     ${APPLICATION}
     PRIVATE
+    ${PROJECT_SOURCE_DIR}/variants/stub.c
     ${PROJECT_SOURCE_DIR}/variants/${BOARD}/startup_gcc.c
     ${PROJECT_SOURCE_DIR}/variants/${BOARD}/main.c
     ${PROJECT_SOURCE_DIR}/variants/${BOARD}/serial.cpp
