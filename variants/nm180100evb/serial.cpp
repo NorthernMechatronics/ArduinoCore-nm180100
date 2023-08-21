@@ -31,10 +31,6 @@
  */
 #include "uart.h"
 
-extern "C" {
-#include <am_mcu_apollo.h>
-}
-
 static UartPinMap SerialPinMap = {
     .tx_pin = 22,
     .rx_pin = 23,

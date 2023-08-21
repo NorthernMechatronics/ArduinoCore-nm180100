@@ -32,9 +32,6 @@
 
 #include <stdlib.h>
 
-#include <am_mcu_apollo.h>
-#include <am_util.h>
-
 #include "ArduinoAPI.h"
 
 static long entropy_retrieve()

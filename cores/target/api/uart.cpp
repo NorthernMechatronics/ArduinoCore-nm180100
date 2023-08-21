@@ -30,12 +30,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <am_mcu_apollo.h>
-#include <am_util.h>
-
-#include <FreeRTOS.h>
-#include <task.h>
-
 #include "ArduinoAPI.h"
 #include "uart.h"
 
