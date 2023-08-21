@@ -10,6 +10,7 @@ set(SPI_INCLUDES
 target_include_directories(
     spi PRIVATE
     ${CORE_INCLUDES}
+    ${HAL_INCLUDES}
     ${SPI_INCLUDES}
 )
 
