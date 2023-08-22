@@ -32,12 +32,24 @@
 
 #include <stdlib.h>
 
-extern "C" {
+extern "C"
+{
 #include <am_mcu_apollo.h>
 }
 
 #include "ArduinoAPI.h"
 #include "ctimer.h"
+
+static uint32_t tone_output_selection;
+static uint64_t tone_cycle_count;
+
+void tone_complete_callback(void)
+{
+    if (--tone_cycle_count == 0)
+    {
+        ct_stop(tone_output_selection);
+    }
+}
 
 void tone(uint8_t _pin, unsigned int frequency, unsigned long duration)
 {
@@ -60,23 +72,30 @@ void tone(uint8_t _pin, unsigned int frequency, unsigned long duration)
     num = CT_OUTSEL_NUM(outsel);
     reg = CT_OUTSEL_REG(outsel);
 
-    uint32_t ctimer_segment = seg ? AM_HAL_CTIMER_TIMERB : AM_HAL_CTIMER_TIMERA;
-    am_hal_ctimer_output_config(
-        num,
-        ctimer_segment,
-        _pin,
-        AM_HAL_CTIMER_OUTPUT_NORMAL,
-        AM_HAL_GPIO_PIN_DRIVESTRENGTH_2MA
-    );
-    am_hal_ctimer_config_single(
-        num,
-        ctimer_segment,
-        (AM_HAL_CTIMER_FN_PWM_REPEAT | AM_HAL_CTIMER_HFRC_3MHZ)
-    );
-
     uint32_t period, duty_cycle;
     period = 3e6 / frequency;
     duty_cycle = period >> 1;
+
+    uint32_t config_flag = AM_HAL_CTIMER_FN_PWM_REPEAT | AM_HAL_CTIMER_HFRC_3MHZ | AM_HAL_CTIMER_PIN_INVERT;
+    uint32_t interrupt_mask = 0;
+    if (duration > 0)
+    {
+        tone_cycle_count = (uint64_t)duration * (uint64_t)frequency / 1000;
+        config_flag |= AM_HAL_CTIMER_INT_ENABLE;
+        interrupt_mask = 1 << (num << 1);
+        if (seg == 1)
+        {
+            interrupt_mask <<= 1;
+        }
+        tone_output_selection = outsel;
+        am_hal_ctimer_int_register(interrupt_mask, tone_complete_callback);
+        am_hal_ctimer_int_enable(interrupt_mask);
+    }
+
+    uint32_t ctimer_segment = seg ? AM_HAL_CTIMER_TIMERB : AM_HAL_CTIMER_TIMERA;
+    am_hal_ctimer_output_config(
+        num, ctimer_segment, _pin, AM_HAL_CTIMER_OUTPUT_NORMAL, AM_HAL_GPIO_PIN_DRIVESTRENGTH_2MA);
+    am_hal_ctimer_config_single(num, ctimer_segment, config_flag);
 
     am_hal_ctimer_period_set(num, ctimer_segment, period, duty_cycle);
     am_hal_ctimer_aux_period_set(num, ctimer_segment, period, duty_cycle);
