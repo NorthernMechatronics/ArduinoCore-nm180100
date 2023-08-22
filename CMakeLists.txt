@@ -10,6 +10,7 @@ project(${APPLICATION})
 
 add_subdirectory(cores)
 add_subdirectory(libraries/SPI)
+add_subdirectory(libraries/Wire)
 
 add_executable(${APPLICATION})
 add_library(arduino STATIC $<TARGET_OBJECTS:hal> $<TARGET_OBJECTS:rtos> $<TARGET_OBJECTS:core>)
@@ -17,6 +18,7 @@ add_library(arduino STATIC $<TARGET_OBJECTS:hal> $<TARGET_OBJECTS:rtos> $<TARGET
 target_link_libraries(
     ${APPLICATION}
     PRIVATE
+        wire
         spi
         arduino
     PUBLIC
