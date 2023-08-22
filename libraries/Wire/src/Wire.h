@@ -80,11 +80,32 @@ public:
     virtual void onReceive(void (*)(int));
     virtual void onRequest(void (*)(void));
 
+    virtual int available();
+    virtual int read();
+    virtual int read(uint8_t *buffer, size_t size);
+    virtual int peek();
+
+    virtual size_t write(uint8_t n);
+    virtual size_t write(const uint8_t *buffer, size_t size);
+
+    using Print::write;
+
+protected:
+    uint8_t mTxBuffer[AM_HAL_IOM_MAX_TXNSIZE_I2C];
+    uint8_t mRxBuffer[AM_HAL_IOM_MAX_TXNSIZE_I2C];
+    uint8_t mTransferBuffer[AM_HAL_IOM_MAX_TXNSIZE_I2C];
+
+    am_hal_queue_t mTxQueue;
+    am_hal_queue_t mRxQueue;
+
 private:
     uint32_t mModule;
     am_hal_iom_config_t mConfig;
     I2CPinMap *mPinMap;
     void *mIomHandle;
+    void *mIosHandle;
+    uint8_t mAddress;
+    uint32_t mFrequency;
     SemaphoreHandle_t mMutex;
 };
 
