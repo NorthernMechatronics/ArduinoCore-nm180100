@@ -33,7 +33,8 @@
 #define _WIRE_H_
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
 #include <am_mcu_apollo.h>
@@ -47,7 +48,8 @@ extern "C" {
 
 #include "HardwareI2C.h"
 
-namespace arduino {
+namespace arduino
+{
 
 struct I2CPinMap
 {
@@ -60,6 +62,24 @@ struct I2CPinMap
 class nmI2C : public HardwareI2C
 {
 public:
+    nmI2C(uint32_t module, I2CPinMap *pinMap);
+
+    virtual void begin();
+    virtual void begin(uint8_t address);
+    virtual void end();
+
+    virtual void setClock(uint32_t freq);
+
+    virtual void beginTransmission(uint8_t address);
+    virtual uint8_t endTransmission(bool stopBit);
+    virtual uint8_t endTransmission(void);
+
+    virtual size_t requestFrom(uint8_t address, size_t len, bool stopBit);
+    virtual size_t requestFrom(uint8_t address, size_t len);
+
+    virtual void onReceive(void (*)(int));
+    virtual void onRequest(void (*)(void));
+
 private:
     uint32_t mModule;
     am_hal_iom_config_t mConfig;
@@ -68,6 +88,6 @@ private:
     SemaphoreHandle_t mMutex;
 };
 
-}
+} // namespace arduino
 
 #endif

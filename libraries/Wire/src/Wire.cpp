@@ -34,3 +34,55 @@
 #include "ArduinoAPI.h"
 
 using namespace arduino;
+
+nmI2C::nmI2C(uint32_t module, I2CPinMap *pinMap)
+{
+}
+
+void nmI2C::begin()
+{
+}
+
+void nmI2C::begin(uint8_t address)
+{
+}
+
+void nmI2C::end()
+{
+}
+
+void nmI2C::setClock(uint32_t freq)
+{
+}
+
+void nmI2C::beginTransmission(uint8_t address)
+{
+}
+
+uint8_t nmI2C::endTransmission(bool stopBit)
+{
+    return 0;
+}
+
+uint8_t nmI2C::endTransmission(void)
+{
+    return 0;
+}
+
+size_t nmI2C::requestFrom(uint8_t address, size_t len, bool stopBit)
+{
+    return 0;
+}
+
+size_t nmI2C::requestFrom(uint8_t address, size_t len)
+{
+    return 0;
+}
+
+void nmI2C::onReceive(void (*)(int))
+{
+}
+
+void nmI2C::onRequest(void (*)(void))
+{
+}
