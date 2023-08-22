@@ -79,7 +79,7 @@ void nmSPI::beginTransaction(SPISettings settings)
     am_hal_gpio_pinconfig(mPinMap->mosi_pin, mPinMap->mosi_pincfg);
     am_hal_gpio_pinconfig(mPinMap->miso_pin, mPinMap->miso_pincfg);
     am_hal_gpio_pinconfig(mPinMap->sck_pin, mPinMap->sck_pincfg);
-    am_hal_gpio_pinconfig(mPinMap->nce_pin, mPinMap->nce_pincfg);
+//    am_hal_gpio_pinconfig(mPinMap->nce_pin, mPinMap->nce_pincfg);
 }
 
 void nmSPI::endTransaction(void)
@@ -87,7 +87,7 @@ void nmSPI::endTransaction(void)
     am_hal_gpio_pinconfig(mPinMap->mosi_pin, g_AM_HAL_GPIO_DISABLE);
     am_hal_gpio_pinconfig(mPinMap->miso_pin, g_AM_HAL_GPIO_DISABLE);
     am_hal_gpio_pinconfig(mPinMap->sck_pin, g_AM_HAL_GPIO_DISABLE);
-    am_hal_gpio_pinconfig(mPinMap->nce_pin, g_AM_HAL_GPIO_DISABLE);
+//    am_hal_gpio_pinconfig(mPinMap->nce_pin, g_AM_HAL_GPIO_DISABLE);
 
     am_hal_iom_disable(mIomHandle);
     am_hal_iom_power_ctrl(mIomHandle, AM_HAL_SYSCTRL_DEEPSLEEP, true);

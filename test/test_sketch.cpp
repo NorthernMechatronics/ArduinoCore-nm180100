@@ -36,9 +36,21 @@ using namespace arduino;
 
 void setup(void)
 {
+    pinMode(17, OUTPUT);
+    pinMode(14, OUTPUT);
+    pinMode(15, OUTPUT);
+    pinMode(30, OUTPUT);
+    pinMode(10, OUTPUT);
+
+    digitalWrite(17, LOW);
+    digitalWrite(14, LOW);
+    digitalWrite(15, LOW);
+    digitalWrite(30, LOW);
+    digitalWrite(10, LOW);
 }
 
 void loop(void)
 {
     delay(1000);
+    digitalToggle(17);
 }
