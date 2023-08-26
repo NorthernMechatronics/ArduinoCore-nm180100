@@ -4,7 +4,7 @@
 # For more info:
 # https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5-3rd-party-Hardware-specification
 
-name=Northern Mechatronics [VARIANT] Arduino Board
+name=Northern Mechatronics Arduino Boards
 version=[VERSION]
 
 ##################################
@@ -26,7 +26,7 @@ variant.path = {build.variant.path}
 #
 ##################################
 defines.arduino = -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_MBED -DARDUINO_ARCH_{build.arch}
-defines.variant = {build.defines}
+defines.variant = 
 defines.extra   = -DAM_PART_APOLLO3 -DAM_PACKAGE_BGA -DPART_apollo3
 defines.all     = {defines.variant} {defines.arduino} {defines.extra}
 
@@ -44,8 +44,8 @@ defines.ld      = {defines.all}
 includes.core    = "-I{cores.path}/arduino/api" "-I{cores.path}/target" "-I{cores.path}/target/api" 
 includes.cmsis   = "-I{cmsis.path}/CMSIS_5/CMSIS/Core/Include" "-I{cmsis.path}/CMSIS-DSP/Include" "-I{cmsis.path}/CMSIS-DSP/Include/dsp" "-I{cmsis.path}/CMSIS-NN/Include"
 includes.hal     = "-I{hal.path}/ambiq/CMSIS/AmbiqMicro/Include" "-I{hal.path}/ambiq/mcu/apollo3" "-I{hal.path}/ambiq/mcu/apollo3/hal" "-I{hal.path}/ambiq/mcu/apollo3/regs" "-I{hal.path}/ambiq/utils"
-includes.rtos    = "-I{rtos.path}/kernel/include" "-I{target.path}/rtos/FreeRTOS/include" "-I{target.path}/rtos/FreeRTOS/include/portable"
-includes.variant = {build.includes}
+includes.rtos    = "-I{rtos.path}/kernel/include" "-I{target.path}/rtos/FreeRTOS" "-I{target.path}/rtos/FreeRTOS/portable"
+includes.variant = "-I{build.variant.path}"
 includes.all     = {includes} {includes.core} {includes.cmsis} {includes.hal} {includes.rtos} {includes.variant}
 
 ##################################
@@ -53,10 +53,10 @@ includes.all     = {includes} {includes.core} {includes.cmsis} {includes.hal} {i
 # libraries
 #
 ##################################
-libs.core    = -Wl,--whole-archive "{archive_file_path}" -Wl,--no-whole-archive
+libs.core    = -Wl,-L{build.core} -Wl,--whole-archive "{archive_file_path}" -Wl,--no-whole-archive
 libs.cmsis   = -Wl,-L{target.path}/cmsis/lib -Wl,--whole-archive -Wl,-lcmsis-nn -Wl,-lCMSISDSP -Wl,--no-whole-archive
 libs.variant = -Wl,-L{variant.path}/lib -Wl,--whole-archive -Wl,-larduino -Wl,--no-whole-archive
-libs.all     = {libs.core} {libs.cmsis} {libs.variant}
+libs.all     = {libs.cmsis} {libs.variant}
 
 ##################################
 #
@@ -82,7 +82,7 @@ compiler.ld.extra_flags      =
 compiler.ar.extra_flags      =
 compiler.axf2bin.extra_flags =
 compiler.axf2hex.extra_flags =
-compiler.common_flags        = -g -M -mthumb -fdata-sections -ffunction-sections -fomit-frame-pointer -mcpu={build.mcu} -mfpu={build.fpu} -mfloat-abi={build.fabi}
+compiler.common_flags        = -g -mthumb -fdata-sections -ffunction-sections -fomit-frame-pointer -mcpu={build.mcu} -mfpu={build.fpu} -mfloat-abi={build.fabi}
 
 ##################################
 #
@@ -91,13 +91,13 @@ compiler.common_flags        = -g -M -mthumb -fdata-sections -ffunction-sections
 ##################################
 compiler.preproc.flags = {compiler.cxx.flags} -w -x c++ -E -CC {compiler.preproc.extra_flags}
 
-compiler.asm.flags     = {compiler.common_flags} {compiler.asm.extra_flags}
+compiler.asm.flags     = {compiler.common_flags} {compiler.asm.extra_flags} -c
 
-compiler.c.flags       = {compiler.common_flags} {compiler.c.extra_flags} -std=c11
+compiler.c.flags       = {compiler.common_flags} {compiler.c.extra_flags} -c -std=c11
 
-compiler.cxx.flags     = {compiler.common_flags} {compiler.cxx.extra_flags} -std=c++17 -fno-exceptions -fno-rtti
+compiler.cxx.flags     = {compiler.common_flags} {compiler.cxx.extra_flags} -c -std=c++17 -fno-exceptions -fno-rtti
 
-compiler.ld.flags      = {compiler.common_flags} {compiler.ld.extra_flags} --specs=nosys.specs -Wl,--gc-sections -Wl,--start-group -lm -c -lgcc -Wl,--end-group
+compiler.ld.flags      = {compiler.common_flags} {compiler.ld.extra_flags} --specs=nano.specs -Wl,--gc-sections -Wl,--start-group -lm -lc -lgcc -Wl,--end-group
 
 compiler.ar.flags      = rcsP {compiler.ar.extra_flags}
 
@@ -135,13 +135,13 @@ recipe.cpp.o.pattern  = "{compiler.path}{compiler.gxx.cmd}" {compiler.cxx.flags}
 
 recipe.ar.pattern     = "{compiler.path}{compiler.ar.cmd}"  {compiler.ar.flags} "{archive_file_path}" "{object_file}"
 
-recipe.c.combine.pattern   = "{compiler.path}{compiler.gcc.cmd}" "-T{build.ldscript}" "-Wl,-Map,{build.path}/{build.project_name}.map" -o "{build.path}/{build.project_name}.axf" {object_files} {libs.all} {compiler.ld.flags} {defines.ld}
+recipe.c.combine.pattern   = "{compiler.path}{compiler.gxx.cmd}" "-T{build.ldscript}" "-Wl,-Map,{build.path}/{build.project_name}.map" -o "{build.path}/{build.project_name}.axf" {object_files} {libs.all} {compiler.ld.flags} {defines.ld}
 
 recipe.objcopy.bin.pattern = "{compiler.path}{compiler.objcopy.cmd}" {compiler.axf2bin.flags} "{build.path}/{build.project_name}.axf" "{build.path}/{build.project_name}.bin"
 
 recipe.objcopy.hex.pattern = "{compiler.path}{compiler.objcopy.cmd}" {compiler.axf2hex.flags} "{build.path}/{build.project_name}.axf" "{build.path}/{build.project_name}.hex"
 
-recipe.hooks.objcopy.postobjcopy.1.pattern = "{compiler.path}{compiler.cpp.cmd}" -E -P -DOUTPUT_FILE="{build.path}/{build.project_name}.bin" "{tools.path}/loadscript" -o "{build.path}/loadscript"
+recipe.hooks.objcopy.postobjcopy.1.pattern = "{compiler.path}{compiler.cpp.cmd}" -E -P -DOUTPUT_FILE="{build.path}/{build.project_name}.bin" "{variant.path}/loadscript" -o "{build.path}/loadscript"
 
 recipe.size.pattern    = "{compiler.path}{compiler.size.cmd}" -A "{build.path}/{build.project_name}.axf"
 recipe.size.regex      = \.text\s+([0-9]+).*
@@ -156,8 +156,8 @@ tools.jlink.cmd.windows=jlink.exe
 
 tools.jlink.upload.params.verbose=
 tools.jlink.upload.params.quiet=
-tools.jlink.upload.pattern="{cmd}" -device {build.device} "{variant.path}/loadscript"
+tools.jlink.upload.pattern="{cmd}" -device {build.device} "{build.path}/loadscript"
 
 tools.jlink.program.params.verbose=
 tools.jlink.program.params.quiet=
-tools.jlink.program.pattern="{cmd}" -device {build.device} "{variant.path}/loadscript"
+tools.jlink.program.pattern="{cmd}" -device {build.device} "{build.path}/loadscript"
