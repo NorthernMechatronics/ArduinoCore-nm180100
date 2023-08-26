@@ -3,6 +3,7 @@ add_library(spi)
 set(SPI_DIR ${CMAKE_CURRENT_LIST_DIR})
 
 set(SPI_INCLUDES
+    ${SPI_DIR}
     ${SPI_DIR}/src
     CACHE PATH "SPI includes"
 )

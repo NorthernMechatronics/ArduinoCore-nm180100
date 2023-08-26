@@ -3,6 +3,7 @@ add_library(wire)
 set(WIRE_DIR ${CMAKE_CURRENT_LIST_DIR})
 
 set(WIRE_INCLUDES
+    ${WIRE_DIR}
     ${WIRE_DIR}/src
     CACHE PATH "WIRE includes"
 )
