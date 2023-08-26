@@ -54,9 +54,9 @@ static SpiPinMap PinMap = {
         .uIOMnum             = 0
     },
     .nce_pincfg = {
-        .uFuncSel = AM_HAL_PIN_11_NCE11,
-        .eDriveStrength = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA,
-        .eGPOutcfg = AM_HAL_GPIO_PIN_OUTCFG_PUSHPULL,
+        .uFuncSel            = AM_HAL_PIN_11_NCE11,
+        .eDriveStrength      = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA,
+        .eGPOutcfg           = AM_HAL_GPIO_PIN_OUTCFG_PUSHPULL,
         .eGPInput            = AM_HAL_GPIO_PIN_INPUT_NONE,
         .eIntDir             = AM_HAL_GPIO_PIN_INTDIR_LO2HI,
         .uIOMnum             = 0,

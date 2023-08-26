@@ -29,38 +29,40 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _VARIANT_H_
-#define _VARIANT_H_
-
-#ifdef __cplusplus
-
-#include "uart.h"
+#include "variant.h"
 #include "SPI.h"
-#include "Wire.h"
 
-extern arduino::Uart Serial;
-extern arduino::Uart Serial1;
+using namespace arduino;
 
-extern arduino::nmSPI SPI;
-extern arduino::nmSPI SPI1;
-extern arduino::nmSPI SPI2;
+static SpiPinMap PinMap = {
+    .mosi_pin = 10,
+    .miso_pin = 9,
+    .sck_pin = 8,
+    .nce_pin = 14,
+    .mosi_pincfg = {
+        .uFuncSel            = AM_HAL_PIN_10_M1MOSI,
+        .eDriveStrength      = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA,
+        .uIOMnum             = 1
+    },
+    .miso_pincfg = {
+        .uFuncSel            = AM_HAL_PIN_9_M1MISO,
+        .uIOMnum             = 1
+    },
+    .sck_pincfg = {
+        .uFuncSel            = AM_HAL_PIN_8_M1SCK,
+        .eDriveStrength      = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA,
+        .uIOMnum             = 1
+    },
+    .nce_pincfg = {
+        .uFuncSel            = AM_HAL_PIN_14_NCE14,
+        .eDriveStrength      = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA,
+        .eGPOutcfg           = AM_HAL_GPIO_PIN_OUTCFG_PUSHPULL,
+        .eGPInput            = AM_HAL_GPIO_PIN_INPUT_NONE,
+        .eIntDir             = AM_HAL_GPIO_PIN_INTDIR_LO2HI,
+        .uIOMnum             = 1,
+        .uNCE                = 2,
+        .eCEpol              = AM_HAL_GPIO_PIN_CEPOL_ACTIVELOW
+    },
+};
 
-extern arduino::nmI2C Wire;
-extern arduino::nmI2C Wire1;
-extern arduino::nmI2C Wire2;
-extern arduino::nmI2C Wire5;
-
-#endif
-
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#define LED_BUILTIN     (17u)
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif
+nmSPI SPI1(1, &PinMap);

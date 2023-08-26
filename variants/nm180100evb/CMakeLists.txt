@@ -22,5 +22,11 @@ target_sources(
     serial.cpp
     serial1.cpp
     spi.cpp
+    spi1.cpp
+    spi2.cpp
+    wire.cpp
+    wire1.cpp
+    wire2.cpp
+    wire5.cpp
     startup_gcc.c
 )

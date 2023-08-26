@@ -29,38 +29,28 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef _VARIANT_H_
-#define _VARIANT_H_
-
-#ifdef __cplusplus
-
-#include "uart.h"
-#include "SPI.h"
+#include "variant.h"
 #include "Wire.h"
 
-extern arduino::Uart Serial;
-extern arduino::Uart Serial1;
+using namespace arduino;
 
-extern arduino::nmSPI SPI;
-extern arduino::nmSPI SPI1;
-extern arduino::nmSPI SPI2;
+static I2CPinMap PinMap = {
+    .sda_pin = 49,
+    .sck_pin = 48,
+    .sda_pincfg = {
+        .uFuncSel            = AM_HAL_PIN_49_M5SDAWIR3,
+        .ePullup             = AM_HAL_GPIO_PIN_PULLUP_1_5K,
+        .eDriveStrength      = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA,
+        .eGPOutcfg           = AM_HAL_GPIO_PIN_OUTCFG_OPENDRAIN,
+        .uIOMnum             = 5,
+    },
+    .sck_pincfg = {
+        .uFuncSel            = AM_HAL_PIN_48_M5SCL,
+        .ePullup             = AM_HAL_GPIO_PIN_PULLUP_1_5K,
+        .eDriveStrength      = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA,
+        .eGPOutcfg           = AM_HAL_GPIO_PIN_OUTCFG_OPENDRAIN,
+        .uIOMnum             = 5,
+    },
+};
 
-extern arduino::nmI2C Wire;
-extern arduino::nmI2C Wire1;
-extern arduino::nmI2C Wire2;
-extern arduino::nmI2C Wire5;
-
-#endif
-
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#define LED_BUILTIN     (17u)
-
-#ifdef __cplusplus
-}
-#endif
-
-#endif
+nmI2C Wire5(5, &PinMap);
