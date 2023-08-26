@@ -23,7 +23,7 @@ target_sources(
     ${CORE_DIR}/PluggableUSB.cpp
     ${CORE_DIR}/Print.cpp
     ${CORE_DIR}/Stream.cpp
-    ${CORE_DIR}/String.cpp
+    ${CORE_DIR}/WString.cpp
 
     api/ctimer.c
     api/interrupts.c
