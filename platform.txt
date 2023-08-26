@@ -13,10 +13,11 @@ version=1.0.0
 #
 ##################################
 cores.path   = {runtime.platform.path}/cores
-system.path  = {runtime.platform.path}/system
-tools.path   = {runtime.platform.path}/tools
-ambiq.path   = {runtime.platform.path}/system/ambiq
-cmsis.path   = {runtime.platform.path}/system/CMSIS/5.7.0
+nmsdk2.path  = {runtime.platform.path}/cores/nmsdk2
+cmsis.path   = {runtime.platform.path}/cores/nmsdk2/cmsis
+hal.path     = {runtime.platform.path}/cores/nmsdk2/hal
+rtos.path    = {runtime.platform.path}/cores/nmsdk2/rtos/FreeRTOS
+target.path  = {runtime.platform.path}/cores/nmsdk2/targets/nm180100
 variant.path = {build.variant.path}
 
 ##################################
@@ -27,7 +28,7 @@ variant.path = {build.variant.path}
 defines.arduino = -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_MBED -DARDUINO_ARCH_{build.arch}
 defines.variant = {build.defines}
 defines.extra   = -DAM_PART_APOLLO3 -DAM_PACKAGE_BGA -DPART_apollo3
-defines.all     = {defines.variant} {defines.arduino} {defines.extra} -DCORDIO_ZERO_COPY_HCI
+defines.all     = {defines.variant} {defines.arduino} {defines.extra}
 
 defines.preproc = {defines.all}
 defines.asm     = {defines.all}
@@ -40,11 +41,12 @@ defines.ld      = {defines.all}
 # includes
 #
 ##################################
-includes.core    = {includes} "-I{cores.path}/arduino" "-I{cores.path}/arduino/api"
+includes.core    = "-I{cores.path}/arduino/api" "-I{cores.path}/target" "-I{cores.path}/target/api" 
+includes.cmsis   = "-I{cmsis.path}/CMSIS_5/CMSIS/Core/Include" "-I{cmsis.path}/CMSIS-DSP/Include" "-I{cmsis.path}/CMSIS-DSP/Include/dsp" "-I{cmsis.path}/CMSIS-NN/Include"
+includes.hal     = "-I{hal.path}/ambiq/CMSIS/AmbiqMicro/Include" "-I{hal.path}/ambiq/mcu/apollo3" "-I{hal.path}/ambiq/mcu/apollo3/hal" "-I{hal.path}/ambiq/mcu/apollo3/regs" "-I{hal.path}/ambiq/utils"
+includes.rtos    = "-I{rtos.path}/kernel/include" "-I{target.path}/rtos/FreeRTOS/include" "-I{target.path}/rtos/FreeRTOS/include/portable"
 includes.variant = {build.includes}
-includes.ambiq   = "-I{ambiq.path}/inc/apollo3" "-I{ambiq.path}/inc/apollo3/hal" "-I{ambiq.path}/inc/apollo3/regs" "-I{ambiq.path}/inc/utils" 
-includes.cmsis   = "-I{cmsis.path}/CMSIS/Include" "-I{cmsis.path}/Device/ARM/apollo3/Include"
-includes.all     = {includes.core} {includes.variant} {includes.ambiq} {includes.cmsis}
+includes.all     = {includes} {includes.core} {includes.cmsis} {includes.hal} {includes.rtos} {includes.variant}
 
 ##################################
 #
@@ -52,9 +54,9 @@ includes.all     = {includes.core} {includes.variant} {includes.ambiq} {includes
 #
 ##################################
 libs.core    = -Wl,--whole-archive "{archive_file_path}" -Wl,--no-whole-archive
-libs.variant = -Wl,-L{cmsis.path}/CMSIS/Lib -Wl,-L{variant.path} -Wl,--whole-archive {build.libs} -Wl,--no-whole-archive
-libs.ambiq   = -Wl,-L{ambiq.path}/lib -Wl,--whole-archive -lam_hal -Wl,-lam_utils -Wl,--no-whole-archive
-libs.all     = {libs.core} {libs.variant} {libs.ambiq}
+libs.cmsis   = -Wl,-L{target.path}/cmsis/lib -Wl,--whole-archive -Wl,-lcmsis-nn -Wl,-lCMSISDSP -Wl,--no-whole-archive
+libs.variant = -Wl,-L{variant.path}/lib -Wl,--whole-archive -Wl,-larduino -Wl,--no-whole-archive
+libs.all     = {libs.core} {libs.cmsis} {libs.variant}
 
 ##################################
 #
@@ -63,9 +65,9 @@ libs.all     = {libs.core} {libs.variant} {libs.ambiq}
 ##################################
 compiler.warning_flags         =
 compiler.warning_flags.none    =
-compiler.warning_flags.default = -Wall -Werror=return-type
+compiler.warning_flags.default = -Werror -Wdouble-promotion -Wstrict-aliasing -Wswitch -Wimplicit-function-declaration
 compiler.warning_flags.more    = {compiler.warning_flags.default}
-compiler.warning_flags.all     = {compiler.warning_flags.default} -Wextra
+compiler.warning_flags.all     = {compiler.warning_flags.default}
 
 ##################################
 #
@@ -80,6 +82,7 @@ compiler.ld.extra_flags      =
 compiler.ar.extra_flags      =
 compiler.axf2bin.extra_flags =
 compiler.axf2hex.extra_flags =
+compiler.common_flags        = -g -MMD -MP -mthumb -fdata-sections -ffunction-sections -fomit-frame-pointer -mcpu={build.mcu} -mfpu={build.fpu} -mfloat-abi={build.fabi}
 
 ##################################
 #
@@ -88,26 +91,27 @@ compiler.axf2hex.extra_flags =
 ##################################
 compiler.preproc.flags = {compiler.cxx.flags} -w -x c++ -E -CC {compiler.preproc.extra_flags}
 
-compiler.asm.flags     = {compiler.asm.extra_flags}
+compiler.asm.flags     = {compiler.common_flags} {compiler.asm.extra_flags}
 
-compiler.c.flags       = {compiler.c.extra_flags} -MMD -c -mthumb -mcpu={build.mcu} -mfpu={build.fpu} -mfloat-abi={build.fabi}
+compiler.c.flags       = {compiler.common_flags} {compiler.c.extra_flags} -std=c11
 
-compiler.cxx.flags     = {compiler.cxx.extra_flags} -MMD -c -mthumb -mcpu={build.mcu} -mfpu={build.fpu} -mfloat-abi={build.fabi}
+compiler.cxx.flags     = {compiler.common_flags} {compiler.cxx.extra_flags} -std=c++17 -fno-exceptions -fno-rtti
 
-compiler.ld.flags      = {compiler.ld.extra_flags} --specs=nano.specs --specs=nosys.specs -lsupc++ -lstdc++ -lm -mthumb -mcpu={build.mcu} -mfpu={build.fpu} -mfloat-abi={build.fabi} -Wl,--gc-sections -Wl,--wrap,_memalign_r -Wl,--wrap,atexit -Wl,--wrap,exit -Wl,--wrap,fprintf -Wl,--wrap,printf -Wl,--wrap,snprintf -Wl,--wrap,vfprintf -Wl,--wrap,vprintf -Wl,--wrap,vsnprintf -Wl,--wrap,vsprintf -Wl,-n
+compiler.ld.flags      = {compiler.common_flags} {compiler.ld.extra_flags} --specs=nosys.specs -Wl,--gc-sections -Wl,--start-group -lm -c -lgcc -Wl,--end-group
 
-compiler.ar.flags      = rcsP {compiler.ar.extra_flags} {compiler.ar.extra_flags}
+compiler.ar.flags      = rcsP {compiler.ar.extra_flags}
 
-compiler.axf2bin.flags = {compiler.axf2bin.extra_flags} {compiler.axf2bin.extra_flags} -O binary
+compiler.axf2bin.flags = {compiler.axf2bin.extra_flags} -O binary
 
-compiler.axf2hex.flags = {compiler.axf2hex.extra_flags} {compiler.axf2hex.extra_flags} -O ihex
+compiler.axf2hex.flags = {compiler.axf2hex.extra_flags} -O ihex
 
 ##################################
 #
 # compiler information
 #
 ##################################
-compiler.path        = {runtime.tools.arm-none-eabi-gcc-9-2020-q4-update.path}/bin/
+#compiler.path        = {runtime.tools.arm-none-eabi-gcc-9-2020-q4-update.path}/bin/
+compiler.path        =
 compiler.prefix      = arm-none-eabi-
 compiler.cpp.cmd     = {compiler.prefix}cpp
 compiler.gcc.cmd     = {compiler.prefix}gcc
@@ -152,8 +156,8 @@ tools.jlink.cmd.windows=jlink.exe
 
 tools.jlink.upload.params.verbose=
 tools.jlink.upload.params.quiet=
-tools.jlink.upload.pattern="{cmd}" -device {build.device} "{build.path}/loadscript"
+tools.jlink.upload.pattern="{cmd}" -device {build.device} "{variant.path}/loadscript"
 
 tools.jlink.program.params.verbose=
 tools.jlink.program.params.quiet=
-tools.jlink.program.pattern="{cmd}" -device {build.device} "{build.path}/loadscript"
+tools.jlink.program.pattern="{cmd}" -device {build.device} "{variant.path}/loadscript"
