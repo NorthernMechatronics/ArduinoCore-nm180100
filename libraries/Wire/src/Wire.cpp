@@ -167,14 +167,14 @@ int nmI2C::read()
     return item;
 }
 
-int read(uint8_t *buffer, size_t size)
+int nmI2C::read(uint8_t *buffer, size_t size)
 {
     if (am_hal_queue_empty(&mRxQueue))
     {
         return -1;
     }
 
-    return am_hal_queue_item_get(buffer, size);
+    return am_hal_queue_item_get(&mRxQueue, buffer, size);
 }
 
 int nmI2C::peek()
@@ -184,8 +184,8 @@ int nmI2C::peek()
         return -1;
     }
 
-    uint8_t *item = am_hal_queue_peek(&mRxQueue);
-    return *item;
+    uint8_t *item = (uint8_t *)am_hal_queue_peek(&mRxQueue);
+    return (int)*item;
 }
 
 size_t nmI2C::write(uint8_t n)
