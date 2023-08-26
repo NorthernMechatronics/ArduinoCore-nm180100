@@ -13,13 +13,11 @@ add_subdirectory(libraries/SPI)
 add_subdirectory(libraries/Wire)
 
 add_executable(${APPLICATION})
-add_library(arduino STATIC $<TARGET_OBJECTS:hal> $<TARGET_OBJECTS:rtos> $<TARGET_OBJECTS:core>)
+add_library(arduino STATIC $<TARGET_OBJECTS:hal> $<TARGET_OBJECTS:rtos> $<TARGET_OBJECTS:core> $<TARGET_OBJECTS:spi> $<TARGET_OBJECTS:wire>)
 
 target_link_libraries(
     ${APPLICATION}
     PRIVATE
-        wire
-        spi
         arduino
     PUBLIC
         -T${PROJECT_SOURCE_DIR}/variants/${BOARD}/AMA3B1KK.ld
