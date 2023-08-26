@@ -1,0 +1,33 @@
+{
+    "packages": [
+        {
+            "name": "NMI",
+            "maintainer": "Northern Mechatronics",
+            "websiteURL": "https://northernmechatronics.com/",
+            "email": "info@northernmechatronics.com",
+            "help": {
+                "online": "https://northernmechatronics.com/"
+            },
+            "platforms": [
+                {
+                    "name": "NM180100 Boards",
+                    "architecture": "nm180100",
+                    "version": "%%VERSION%%",
+                    "category": "Arduino",
+                    "url": "%%URL%%",
+                    "archiveFileName": "%%FILENAME%%",
+                    "checksum": "SHA-256:%%CHECKSUM%%",
+                    "size": "%%SIZE%%",
+                    "help": {
+                        "online": "https://github.com/northernmechatronics/ArduinoCore-nm180100"
+                    },
+                    "boards": [
+                        {
+                            "name": "NM180100EVB"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]    
+}
