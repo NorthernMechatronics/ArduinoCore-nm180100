@@ -11,9 +11,16 @@ project(${APPLICATION})
 add_subdirectory(cores)
 add_subdirectory(libraries/SPI)
 add_subdirectory(libraries/Wire)
+add_subdirectory(variants/nm180100evb)
 
 add_executable(${APPLICATION})
-add_library(arduino STATIC $<TARGET_OBJECTS:hal> $<TARGET_OBJECTS:rtos> $<TARGET_OBJECTS:core> $<TARGET_OBJECTS:spi> $<TARGET_OBJECTS:wire>)
+add_library(arduino STATIC
+    $<TARGET_OBJECTS:hal>
+    $<TARGET_OBJECTS:rtos>
+    $<TARGET_OBJECTS:core>
+    $<TARGET_OBJECTS:spi>
+    $<TARGET_OBJECTS:wire>
+    $<TARGET_OBJECTS:variant>)
 
 target_link_libraries(
     ${APPLICATION}
@@ -48,13 +55,8 @@ target_include_directories(
 target_sources(
     ${APPLICATION}
     PRIVATE
-    ${PROJECT_SOURCE_DIR}/variants/stub.c
-    ${PROJECT_SOURCE_DIR}/variants/${BOARD}/startup_gcc.c
-    ${PROJECT_SOURCE_DIR}/variants/${BOARD}/main.c
-    ${PROJECT_SOURCE_DIR}/variants/${BOARD}/serial.cpp
-    ${PROJECT_SOURCE_DIR}/variants/${BOARD}/serial1.cpp
-    ${PROJECT_SOURCE_DIR}/variants/${BOARD}/spi.cpp
     ${PROJECT_SOURCE_DIR}/test/test_sketch.cpp
+    ${PROJECT_SOURCE_DIR}/variants/stub.c
 )
 
 add_custom_command(
