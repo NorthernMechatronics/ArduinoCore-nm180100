@@ -4,6 +4,7 @@ nm180100evb.vid.0 = 0x1366
 nm180100evb.pid.0 = 0x0105
 
 nm180100evb.build.variant=nm180100evb
+nm180100evb.build.core=arduino
 nm180100evb.build.arch=apollo3
 nm180100evb.build.device=AMA3B1KK-KBR
 nm180100evb.build.mcu=cortex-m4
