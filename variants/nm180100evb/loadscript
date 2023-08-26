@@ -1,0 +1,7 @@
+si SWD
+speed 4000
+sleep 10
+loadbin OUTPUT_FILE, 0xC000
+r
+g
+qc
