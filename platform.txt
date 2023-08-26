@@ -82,7 +82,7 @@ compiler.ld.extra_flags      =
 compiler.ar.extra_flags      =
 compiler.axf2bin.extra_flags =
 compiler.axf2hex.extra_flags =
-compiler.common_flags        = -g -MMD -MP -mthumb -fdata-sections -ffunction-sections -fomit-frame-pointer -mcpu={build.mcu} -mfpu={build.fpu} -mfloat-abi={build.fabi}
+compiler.common_flags        = -g -M -mthumb -fdata-sections -ffunction-sections -fomit-frame-pointer -mcpu={build.mcu} -mfpu={build.fpu} -mfloat-abi={build.fabi}
 
 ##################################
 #
