@@ -24,9 +24,9 @@ target_sources(
     spi.cpp
     spi1.cpp
     spi2.cpp
-    wire.cpp
-    wire1.cpp
-    wire2.cpp
-    wire5.cpp
+    i2c.cpp
+    i2c1.cpp
+    i2c2.cpp
+    i2c5.cpp
     startup_gcc.c
 )
