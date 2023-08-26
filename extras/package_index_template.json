@@ -10,12 +10,12 @@
             },
             "platforms": [
                 {
-                    "name": "NM180100 Boards",
+                    "name": "%%VARIANT%%",
                     "architecture": "nm180100",
                     "version": "%%VERSION%%",
                     "category": "Arduino",
-                    "url": "%%URL%%",
-                    "archiveFileName": "%%FILENAME%%",
+                    "url": "%%URL%%/%%ARCHIVENAME%%",
+                    "archiveFileName": "%%ARCHIVENAME%%",
                     "checksum": "SHA-256:%%CHECKSUM%%",
                     "size": "%%SIZE%%",
                     "help": {
