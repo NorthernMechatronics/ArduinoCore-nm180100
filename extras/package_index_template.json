@@ -1,7 +1,7 @@
 {
     "packages": [
         {
-            "name": "NMI",
+            "name": "nmi",
             "maintainer": "Northern Mechatronics",
             "websiteURL": "https://northernmechatronics.com/",
             "email": "info@northernmechatronics.com",
