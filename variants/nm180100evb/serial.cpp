@@ -32,7 +32,7 @@
 #include "variant.h"
 #include "uart.h"
 
-namespace arduino {
+using namespace arduino;
 
 static UartPinMap PinMap = {
     .tx_pin = 22,
@@ -52,9 +52,7 @@ static UartPinMap PinMap = {
 
 Uart Serial(0, &PinMap);
 
-}
-
 extern "C" void am_uart_isr(void)
 {
-    arduino::Serial.isr();
+    Serial.isr();
 }

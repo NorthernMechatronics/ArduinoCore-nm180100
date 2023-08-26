@@ -32,7 +32,7 @@
 #include "variant.h"
 #include "SPI.h"
 
-namespace arduino {
+using namespace arduino;
 
 static SpiPinMap PinMap = {
     .mosi_pin = 7,
@@ -66,5 +66,3 @@ static SpiPinMap PinMap = {
 };
 
 nmSPI SPI(0, &PinMap);
-
-}

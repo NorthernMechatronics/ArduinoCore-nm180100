@@ -31,7 +31,7 @@
  */
 #include "uart.h"
 
-namespace arduino {
+using namespace arduino;
 
 static UartPinMap PinMap = {
     .tx_pin = 35,
@@ -51,9 +51,7 @@ static UartPinMap PinMap = {
 
 Uart Serial1(1, &PinMap);
 
-}
-
 extern "C" void am_uart1_isr(void)
 {
-    arduino::Serial1.isr();
+    Serial1.isr();
 }

@@ -37,14 +37,10 @@
 #include "uart.h"
 #include "SPI.h"
 
-namespace arduino {
+extern arduino::Uart Serial;
+extern arduino::Uart Serial1;
 
-extern Uart Serial;
-extern Uart Serial1;
-
-extern nmSPI SPI;
-
-}
+extern arduino::nmSPI SPI;
 
 #endif
 
