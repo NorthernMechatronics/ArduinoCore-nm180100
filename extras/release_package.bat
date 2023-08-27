@@ -5,7 +5,7 @@ IF "%~3" == "" GOTO error
 
 
 SET "DESTINATION=staging/ArduinoCore-%~1"
-robocopy cores "%DESTINATION%/cores" *.h *.a /e
+robocopy cores "%DESTINATION%/cores" stub.c *.h *.a /e
 robocopy "libraries" "%DESTINATION%/libraries" library.properties *.h *.a /e
 robocopy "variants/%~1" "%DESTINATION%/variants/%~1" AMA3B1KK.ld loadscript *.h *.a /e
 copy "variants\stub.c" "%DESTINATION%\variants"
