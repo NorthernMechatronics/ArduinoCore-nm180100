@@ -29,6 +29,10 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <reent.h>
 
 int _close(int fd)
@@ -49,4 +53,24 @@ int _read(int file, char *ptr, int len)
 int _write(int file, char *ptr, int len)
 {
     return len;
+}
+
+int _fstat(int fd, struct stat *buffer)
+{
+    return -1;
+}
+
+int _getpid(void)
+{
+    return 0;
+}
+
+int _isatty(int fd)
+{
+    return 0;
+}
+
+int _kill(pid_t pid, int sig)
+{
+    return -1;
 }
