@@ -11,6 +11,7 @@ project(${APPLICATION})
 add_subdirectory(cores)
 add_subdirectory(libraries/SPI)
 add_subdirectory(libraries/Wire)
+add_subdirectory(libraries/Servo)
 add_subdirectory(variants/nm180100evb)
 
 add_executable(${APPLICATION})
@@ -20,6 +21,7 @@ add_library(arduino STATIC
     $<TARGET_OBJECTS:core>
     $<TARGET_OBJECTS:spi>
     $<TARGET_OBJECTS:wire>
+    $<TARGET_OBJECTS:servo>
     $<TARGET_OBJECTS:variant>)
 
 target_link_libraries(
@@ -51,6 +53,8 @@ target_include_directories(
 
     ${SPI_INCLUDES}
     ${WIRE_INCLUDES}
+
+    ${SERVO_INCLUDES}
 )
 
 target_sources(
@@ -66,7 +70,7 @@ add_custom_command(
     COMMAND ${CMAKE_OBJCOPY} -Obinary $<TARGET_FILE_NAME:${APPLICATION}> $<TARGET_FILE_NAME:${APPLICATION}>.bin
 )
 
-add_dependencies(arduino hal rtos core)
-add_dependencies(${APPLICATION} arduino spi)
+add_dependencies(arduino hal rtos core spi wire servo)
+add_dependencies(${APPLICATION} arduino)
 
 install(TARGETS arduino DESTINATION ${PROJECT_SOURCE_DIR}/variants/${BOARD}/lib)
