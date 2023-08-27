@@ -25,7 +25,7 @@ variant.path = {build.variant.path}
 # defines
 #
 ##################################
-defines.arduino = -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_MBED -DARDUINO_ARCH_{build.arch}
+defines.arduino = -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch}
 defines.variant = 
 defines.extra   = -DAM_PART_APOLLO3 -DAM_PACKAGE_BGA -DPART_apollo3
 defines.all     = {defines.variant} {defines.arduino} {defines.extra}
@@ -56,7 +56,7 @@ includes.all     = {includes} {includes.core} {includes.cmsis} {includes.hal} {i
 libs.core    = -Wl,-L{build.core} -Wl,--whole-archive "{archive_file_path}" -Wl,--no-whole-archive
 libs.cmsis   = -Wl,-L{target.path}/cmsis/lib -Wl,--whole-archive -Wl,-lcmsis-nn -Wl,-lCMSISDSP -Wl,--no-whole-archive
 libs.variant = -Wl,-L{variant.path}/lib -Wl,--whole-archive -Wl,-larduino -Wl,--no-whole-archive
-libs.all     = {libs.cmsis} {libs.variant}
+libs.all     = {libs.cmsis} {libs.core} {libs.variant}
 
 ##################################
 #
@@ -97,7 +97,7 @@ compiler.c.flags       = {compiler.common_flags} {compiler.c.extra_flags} -c -st
 
 compiler.cxx.flags     = {compiler.common_flags} {compiler.cxx.extra_flags} -c -std=c++17 -fno-exceptions -fno-rtti
 
-compiler.ld.flags      = {compiler.common_flags} {compiler.ld.extra_flags} --specs=nano.specs -Wl,--gc-sections -Wl,--start-group -lm -lc -lgcc -Wl,--end-group
+compiler.ld.flags      = {compiler.common_flags} {compiler.ld.extra_flags} --specs=nosys.specs --specs=nano.specs -Wl,--gc-sections -Wl,--start-group -lm -lc -lgcc -Wl,--end-group
 
 compiler.ar.flags      = rcsP {compiler.ar.extra_flags}
 
