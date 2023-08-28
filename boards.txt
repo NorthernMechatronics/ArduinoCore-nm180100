@@ -16,3 +16,5 @@ nm180100evb.build.ldscript={runtime.platform.path}/variants/nm180100evb/AMA3B1KK
 
 nm180100evb.upload.tool=jlink
 nm180100evb.upload.protocol=jlink
+
+nm180100evb.debug.tool=gdb

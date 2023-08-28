@@ -119,6 +119,7 @@ compiler.gxx.cmd     = {compiler.prefix}g++
 compiler.ar.cmd      = {compiler.prefix}ar
 compiler.objcopy.cmd = {compiler.prefix}objcopy
 compiler.size.cmd    = {compiler.prefix}size
+compiler.gdb.cmd     = {compiler.prefix}gdb
 
 ##################################
 #
@@ -161,3 +162,9 @@ tools.jlink.upload.pattern="{cmd}" -device {build.device} "{build.path}/loadscri
 tools.jlink.program.params.verbose=
 tools.jlink.program.params.quiet=
 tools.jlink.program.pattern="{cmd}" -device {build.device} "{build.path}/loadscript"
+
+debug.executable={build.path}/{build.project_name}.axf
+debug.toolchain=gcc
+debug.tolchain.prefix=arm-none-eabi-
+debug.server=jlink
+debug.server.jlink.path=JLinkGDBServer
