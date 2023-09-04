@@ -61,7 +61,7 @@ target_sources(
     ${APPLICATION}
     PRIVATE
     ${PROJECT_SOURCE_DIR}/test/test_sketch.cpp
-    ${PROJECT_SOURCE_DIR}/variants/stub.c
+    ${PROJECT_SOURCE_DIR}/cores/arduino/stub.c
 )
 
 add_custom_command(
