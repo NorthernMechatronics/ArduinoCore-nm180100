@@ -90,6 +90,8 @@ public:
 
     using Print::write;
 
+    virtual void isr(void);
+
 protected:
     uint8_t mTxBuffer[AM_HAL_IOM_MAX_TXNSIZE_I2C];
     uint8_t mRxBuffer[AM_HAL_IOM_MAX_TXNSIZE_I2C];
@@ -100,13 +102,16 @@ protected:
 
 private:
     uint32_t mModule;
-    am_hal_iom_config_t mConfig;
+    am_hal_iom_config_t mIomConfig;
+    am_hal_ios_config_t mIosConfig;
     I2CPinMap *mPinMap;
     void *mIomHandle;
     void *mIosHandle;
-    uint8_t mAddress;
+    uint32_t mAddress;
     uint32_t mFrequency;
     SemaphoreHandle_t mMutex;
+    void (*mReceiveHandler)(int);
+    void (*mRequestHandler)(void);
 };
 
 } // namespace arduino
