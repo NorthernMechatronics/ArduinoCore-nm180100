@@ -116,4 +116,6 @@ private:
 
 } // namespace arduino
 
+typedef arduino::nmI2C TwoWire;
+
 #endif
