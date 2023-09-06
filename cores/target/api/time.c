@@ -51,3 +51,8 @@ unsigned long millis(void)
 {
     return ((xTaskGetTickCount() * 1000) / configTICK_RATE_HZ);
 }
+
+unsigned long micros(void)
+{
+    return ((xTaskGetTickCount() * 1000000) / configTICK_RATE_HZ);
+}
