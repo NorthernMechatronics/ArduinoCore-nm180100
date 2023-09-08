@@ -94,4 +94,11 @@ private:
 
 }
 
+#define SPISettings     arduino::SPISettings
+#define SPIClass        arduino::nmSPI
+#define SPI_MODE0       arduino::SPI_MODE0
+#define SPI_MODE1       arduino::SPI_MODE1
+#define SPI_MODE2       arduino::SPI_MODE2
+#define SPI_MODE3       arduino::SPI_MODE3
+
 #endif

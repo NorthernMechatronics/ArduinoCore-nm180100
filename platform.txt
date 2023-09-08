@@ -25,7 +25,7 @@ variant.path = {build.variant.path}
 # defines
 #
 ##################################
-defines.arduino = -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch}
+defines.arduino = -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} -DARDUINO_ARCH_MBED
 defines.variant = 
 defines.extra   = -DAM_PART_APOLLO3 -DAM_PACKAGE_BGA -DPART_apollo3
 defines.all     = {defines.variant} {defines.arduino} {defines.extra}
@@ -95,7 +95,7 @@ compiler.asm.flags     = {compiler.common_flags} {compiler.asm.extra_flags} -c
 
 compiler.c.flags       = {compiler.common_flags} {compiler.c.extra_flags} -c -std=c11
 
-compiler.cxx.flags     = {compiler.common_flags} {compiler.cxx.extra_flags} -c -std=c++17 -fno-exceptions -fno-rtti
+compiler.cxx.flags     = {compiler.common_flags} {compiler.cxx.extra_flags} -c -std=c++17 -fpermissive -fno-exceptions -fno-rtti
 
 compiler.ld.flags      = {compiler.common_flags} {compiler.ld.extra_flags} --specs=nosys.specs --specs=nano.specs -Wl,--gc-sections -Wl,--start-group -lm -lc -lgcc -Wl,--end-group
 

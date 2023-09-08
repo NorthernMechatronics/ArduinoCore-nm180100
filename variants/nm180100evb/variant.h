@@ -41,9 +41,13 @@
 extern arduino::Uart Serial;
 extern arduino::Uart Serial1;
 
+#define SPI_INTERFACES_COUNT    3
+
 extern arduino::nmSPI SPI;
 extern arduino::nmSPI SPI1;
 extern arduino::nmSPI SPI2;
+
+#define WIRE_INTERFACES_COUNT    3
 
 extern arduino::nmI2C Wire;
 extern arduino::nmI2C Wire1;
