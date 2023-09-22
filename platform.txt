@@ -165,6 +165,6 @@ tools.jlink.program.pattern="{cmd}" -device {build.device} "{build.path}/loadscr
 
 debug.executable={build.path}/{build.project_name}.axf
 debug.toolchain=gcc
-debug.tolchain.prefix=arm-none-eabi-
+debug.toolchain.prefix=arm-none-eabi-
 debug.server=jlink
 debug.server.jlink.path=JLinkGDBServer
