@@ -27,6 +27,7 @@ target_sources(
 
     api/ctimer.c
     api/interrupts.c
+    api/pulse.cpp
     api/random.cpp
     api/time.c
     api/tone.cpp
