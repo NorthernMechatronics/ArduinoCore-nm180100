@@ -51,18 +51,32 @@ void delayMicroseconds(unsigned int us)
 
 unsigned long millis(void)
 {
-    uint32_t current_ticks = am_hal_stimer_counter_get();
-    uint32_t scaled_ticks = current_ticks * 1000;
-    uint32_t frequency = clockFrequency();
-    return (scaled_ticks / frequency);
+    float_t current_ticks = am_hal_stimer_counter_get();
+    float_t scaled_ticks = current_ticks * 1000;
+    float_t frequency = clockFrequency();
+    float_t elapsed_ms = scaled_ticks / frequency;
+
+    while (elapsed_ms > UINT32_MAX)
+    {
+        elapsed_ms -= UINT32_MAX;
+    }
+
+    return (unsigned long)elapsed_ms;
 }
 
 unsigned long micros(void)
 {
+    float_t frequency = clockFrequency();
     float_t current_ticks = am_hal_stimer_counter_get();
     float_t scaled_ticks = current_ticks * 1000000;
-    float_t frequency = clockFrequency();
-    return (unsigned long)(scaled_ticks / frequency);
+    float_t elapsed_us = scaled_ticks / frequency;
+
+    while (elapsed_us > UINT32_MAX)
+    {
+        elapsed_us -= UINT32_MAX;
+    }
+
+    return (unsigned long)elapsed_us;
 }
 
 void yield(void)
