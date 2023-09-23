@@ -37,6 +37,8 @@
 
 #include "ArduinoAPI.h"
 
+uint32_t clockFrequency(void);
+
 void delay(unsigned long ms)
 {
     vTaskDelay(pdMS_TO_TICKS(ms));
@@ -49,15 +51,61 @@ void delayMicroseconds(unsigned int us)
 
 unsigned long millis(void)
 {
-    return ((xTaskGetTickCount() * 1000) / configTICK_RATE_HZ);
+    uint32_t current_ticks = am_hal_stimer_counter_get();
+    uint32_t scaled_ticks = current_ticks * 1000;
+    uint32_t frequency = clockFrequency();
+    return (scaled_ticks / frequency);
 }
 
 unsigned long micros(void)
 {
-    return ((xTaskGetTickCount() * 1000000) / configTICK_RATE_HZ);
+    float_t current_ticks = am_hal_stimer_counter_get();
+    float_t scaled_ticks = current_ticks * 1000000;
+    float_t frequency = clockFrequency();
+    return (unsigned long)(scaled_ticks / frequency);
 }
 
 void yield(void)
 {
     taskYIELD();
+}
+
+uint32_t clockFrequency(void)
+{
+    uint32_t ui32CurrConfig = CTIMER->STCFG;
+    uint32_t ui32Clksel = _FLD2VAL(CTIMER_STCFG_CLKSEL, ui32CurrConfig);
+    uint32_t ui32Frequency = 0;
+
+    switch(ui32Clksel)
+    {
+    case CTIMER_STCFG_CLKSEL_HFRC_DIV16:
+        ui32Frequency = 3000000;
+        break;
+
+    case CTIMER_STCFG_CLKSEL_HFRC_DIV256:
+        ui32Frequency = 187500;
+        break;
+
+    case CTIMER_STCFG_CLKSEL_XTAL_DIV1:
+        ui32Frequency = 32768;
+        break;
+
+    case CTIMER_STCFG_CLKSEL_XTAL_DIV2:
+        ui32Frequency = 16384;
+        break;
+
+    case CTIMER_STCFG_CLKSEL_XTAL_DIV32:
+        ui32Frequency = 1024;
+        break;
+
+    case CTIMER_STCFG_CLKSEL_LFRC_DIV1:
+        ui32Frequency = 1024;
+        break;
+
+    default:
+        break;
+    }
+
+    return ui32Frequency;
+
 }
