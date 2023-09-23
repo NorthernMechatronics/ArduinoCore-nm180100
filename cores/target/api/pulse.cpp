@@ -40,9 +40,54 @@ typedef struct pulse_context_s
     uint8_t phase;
 } pulse_context_t;
 
+extern "C" uint32_t clockFrequency(void);
+
 unsigned long pulseIn(pin_size_t pin, uint8_t state, unsigned long timeout)
 {
     unsigned long duration_us = 0;
+    uint32_t tick_start, tick_stop, tick_current;
+    uint32_t tick_timeout, tick_end, cpu_frequency;
+
+    am_hal_gpio_pinconfig(pin, g_AM_HAL_GPIO_INPUT);
+
+    cpu_frequency = clockFrequency();
+    tick_timeout = (timeout / 1000000.0) * cpu_frequency;
+
+    tick_start = am_hal_stimer_counter_get();
+    tick_end = tick_start + tick_timeout;
+    while (am_hal_gpio_input_read(pin) == state)
+    {
+        tick_current = am_hal_stimer_counter_get();
+        if (tick_current > tick_end)
+        {
+            return 0;
+        }
+    }
+
+    while (am_hal_gpio_input_read(pin) != state)
+    {
+        tick_current = am_hal_stimer_counter_get();
+        if (tick_current > tick_end)
+        {
+            return 0;
+        }
+    }
+
+    tick_start = am_hal_stimer_counter_get();
+    tick_end = tick_start + tick_timeout;
+    while (am_hal_gpio_input_read(pin) == state)
+    {
+        tick_current = am_hal_stimer_counter_get();
+        if (tick_current > tick_end)
+        {
+            return 0;
+        }
+    }
+    tick_stop = am_hal_stimer_counter_get();
+    am_hal_gpio_fastgpio_disable(pin);
+
+    duration_us = (tick_stop - tick_start) * 1000000 / cpu_frequency;
+
     return duration_us;
 }
 
