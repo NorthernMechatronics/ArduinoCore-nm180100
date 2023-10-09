@@ -22,7 +22,8 @@ add_library(arduino STATIC
     $<TARGET_OBJECTS:spi>
     $<TARGET_OBJECTS:wire>
     $<TARGET_OBJECTS:servo>
-    $<TARGET_OBJECTS:variant>)
+    $<TARGET_OBJECTS:variant>
+)
 
 target_link_libraries(
     ${APPLICATION}
