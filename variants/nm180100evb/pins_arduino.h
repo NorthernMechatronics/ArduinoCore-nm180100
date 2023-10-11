@@ -58,6 +58,13 @@
 #define D20 (27)
 #define D21 (25)
 
-// Analog to be implemented, conflicts with cores/nmsdk2/hal/ambiq/mcu/apollo3/hal/am_hal_timerc.h A0-A4
+#define A0  (13)
+#define A1  (29)
+#define A2  (11)
+#define A3  (31)
+#define A4  (32)
+#define A5  (33)
+#define A6  (34)
+#define A7  (35)
 
 #endif
