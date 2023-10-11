@@ -32,15 +32,16 @@
 #ifndef _UART_H_
 #define _UART_H_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <stdint.h>
 
-#include <am_mcu_apollo.h>
+#include <apollo3.h>
+#include <am_hal_global.h>
+#include <am_hal_queue.h>
+#include <am_hal_status.h>
+#include <am_hal_sysctrl.h>
 
-#ifdef __cplusplus
-}
-#endif
+#include <am_hal_gpio.h>
+#include <am_hal_uart.h>
 
 #include <FreeRTOS.h>
 #include <task.h>

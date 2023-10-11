@@ -33,6 +33,8 @@
 #include "SPI.h"
 #include "ArduinoAPI.h"
 
+#include <am_hal_pin.h>
+
 using namespace arduino;
 
 nmSPI::nmSPI(uint32_t module, SpiPinMap *pinMap) : mModule(module), mPinMap(pinMap)

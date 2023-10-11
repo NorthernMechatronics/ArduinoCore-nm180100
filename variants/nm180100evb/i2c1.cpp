@@ -32,6 +32,8 @@
 #include "variant.h"
 #include "Wire.h"
 
+#include <am_hal_pin.h>
+
 using namespace arduino;
 
 static I2CPinMap PinMap = {
