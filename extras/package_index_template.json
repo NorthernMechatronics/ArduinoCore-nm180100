@@ -10,7 +10,7 @@
             },
             "platforms": [
                 {
-                    "name": "%%VARIANT%%",
+                    "name": "Northern Mechatronics",
                     "architecture": "nm180100",
                     "version": "%%VERSION%%",
                     "category": "Arduino",
@@ -24,6 +24,9 @@
                     "boards": [
                         {
                             "name": "NM180100EVB"
+                        },
+                        {
+                            "name": "NM180410"
                         }
                     ]
                 }
