@@ -4,7 +4,8 @@ cmake_minimum_required(VERSION 3.13.0)
 get_filename_component(APPLICATION ${CMAKE_CURRENT_SOURCE_DIR} NAME_WE)
 
 set(TARGET "nm180100" CACHE STRING "" FORCE)
-set(BOARD "nm180100evb" CACHE STRING "" FORCE)
+#set(BOARD "nm180100evb" CACHE STRING "" FORCE)
+set(BOARD "nm180410" CACHE STRING "" FORCE)
 
 project(${APPLICATION})
 
@@ -12,7 +13,7 @@ add_subdirectory(cores)
 add_subdirectory(libraries/SPI)
 add_subdirectory(libraries/Wire)
 add_subdirectory(libraries/Servo)
-add_subdirectory(variants/nm180100evb)
+add_subdirectory(variants/${BOARD})
 
 add_executable(${APPLICATION})
 add_library(arduino STATIC
