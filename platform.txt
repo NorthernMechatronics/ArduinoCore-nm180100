@@ -161,7 +161,11 @@ tools.jlink.upload.pattern="{cmd}" -device {build.device} "{build.path}/loadscri
 
 tools.jlink.program.params.verbose=
 tools.jlink.program.params.quiet=
-tools.jlink.program.pattern="{cmd}" -device {build.device} "{build.path}/loadscript"
+
+tools.pyocd.cmd=pyocd
+tools.jlink.upload.params.verbose=
+tools.jlink.upload.params.quiet=
+tools.pyocd.upload.pattern="{cmd}" flash "{build.path}/{build.project_name}.bin"
 
 debug.executable={build.path}/{build.project_name}.axf
 debug.toolchain=gcc
