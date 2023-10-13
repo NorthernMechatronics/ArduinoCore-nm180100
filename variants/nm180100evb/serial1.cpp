@@ -32,6 +32,8 @@
 #include <am_hal_pin.h>
 #include "uart.h"
 
+#include <am_hal_pin.h>
+
 using namespace arduino;
 
 static UartPinMap PinMap = {
