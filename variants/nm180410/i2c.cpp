@@ -32,25 +32,27 @@
 #include "variant.h"
 #include "Wire.h"
 
+#include <am_hal_pin.h>
+
 using namespace arduino;
 
 static I2CPinMap PinMap = {
-    .sda_pin = 6,
-    .sck_pin = 5,
+    .sda_pin = 9,
+    .sck_pin = 8,
     .sda_pincfg = {
-        .uFuncSel            = AM_HAL_PIN_6_M0SDAWIR3,
+        .uFuncSel            = AM_HAL_PIN_9_M1SDAWIR3,
         .ePullup             = AM_HAL_GPIO_PIN_PULLUP_1_5K,
         .eDriveStrength      = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA,
         .eGPOutcfg           = AM_HAL_GPIO_PIN_OUTCFG_OPENDRAIN,
-        .uIOMnum             = 0,
+        .uIOMnum             = 1,
     },
     .sck_pincfg = {
-        .uFuncSel            = AM_HAL_PIN_5_M0SCL,
+        .uFuncSel            = AM_HAL_PIN_8_M1SCL,
         .ePullup             = AM_HAL_GPIO_PIN_PULLUP_1_5K,
         .eDriveStrength      = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA,
         .eGPOutcfg           = AM_HAL_GPIO_PIN_OUTCFG_OPENDRAIN,
-        .uIOMnum             = 0,
+        .uIOMnum             = 1,
     },
 };
 
-nmI2C Wire(0, &PinMap);
+nmI2C Wire(1, &PinMap);

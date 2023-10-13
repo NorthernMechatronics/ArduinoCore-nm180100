@@ -32,6 +32,8 @@
 #include "variant.h"
 #include "SPI.h"
 
+#include <am_hal_pin.h>
+
 using namespace arduino;
 
 static SpiPinMap PinMap = {
