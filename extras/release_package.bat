@@ -27,7 +27,7 @@ for /f "delims= " %%i in ('sha256sum %BASENAME%') do set CHECKSUM=%%i
 for /f "delims= " %%i in ('wc -c %BASENAME%') do set SIZE=%%i
 cd ..
 
-SET "JSON_FILE=staging/package_%~1.json"
+SET "JSON_FILE=staging/package_%~1_index.json"
 copy extras\package_index_template.json "%JSON_FILE%"
 sed -i "s/%%%%VARIANT%%%%/%~1/g" "%JSON_FILE%"
 sed -i "s/%%%%VERSION%%%%/%~2/g" "%JSON_FILE%"
