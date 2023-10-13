@@ -3,9 +3,17 @@ cmake_minimum_required(VERSION 3.13.0)
 
 get_filename_component(APPLICATION ${CMAKE_CURRENT_SOURCE_DIR} NAME_WE)
 
+option(NM180100EVB "" OFF)
+option(NM180410 "" OFF)
+
 set(TARGET "nm180100" CACHE STRING "" FORCE)
-#set(BOARD "nm180100evb" CACHE STRING "" FORCE)
-set(BOARD "nm180410" CACHE STRING "" FORCE)
+if (NM180100EVB)
+    set(BOARD "nm180100evb" CACHE STRING "" FORCE)
+elseif (NM180410)
+    set(BOARD "nm180410" CACHE STRING "" FORCE)
+else()
+    return()
+endif()
 
 project(${APPLICATION})
 
