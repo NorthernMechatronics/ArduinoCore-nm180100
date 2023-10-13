@@ -53,7 +53,7 @@ This will create a staging directory containing a json file and an archive conta
 Once the package is generated, you can host it with the following python commands:
 ```
 cd staging
-pythom -m http.server 8080
+python -m http.server 8080
 ```
 
 ###### Download the Package
@@ -74,7 +74,7 @@ http://localhost:8080/package_nm180100evb.json
 
 The BOARDS MANAGER panel opens up.
 
-5. Type the board varinat in the search box for the board of interest.  For example,
+5. Type the board variant in the search box for the board of interest.  For example,
 ```
 nm180100evb
 ```
