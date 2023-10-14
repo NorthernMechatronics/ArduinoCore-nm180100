@@ -29,4 +29,5 @@ target_sources(
     i2c2.cpp
     i2c5.cpp
     startup_gcc.c
+    variant.cpp
 )
