@@ -18,6 +18,7 @@ cmsis.path   = {runtime.platform.path}/cores/nmsdk2/cmsis
 hal.path     = {runtime.platform.path}/cores/nmsdk2/hal
 rtos.path    = {runtime.platform.path}/cores/nmsdk2/rtos/FreeRTOS
 target.path  = {runtime.platform.path}/cores/nmsdk2/targets/nm180100
+libraries.path  = {runtime.platform.path}/libraries
 variant.path = {build.variant.path}
 
 ##################################
@@ -45,8 +46,9 @@ includes.core    = "-I{cores.path}/arduino/api" "-I{cores.path}/target" "-I{core
 includes.cmsis   = "-I{cmsis.path}/CMSIS_5/CMSIS/Core/Include" "-I{cmsis.path}/CMSIS-DSP/Include" "-I{cmsis.path}/CMSIS-DSP/Include/dsp" "-I{cmsis.path}/CMSIS-NN/Include"
 includes.hal     = "-I{hal.path}/ambiq/CMSIS/AmbiqMicro/Include" "-I{hal.path}/ambiq/mcu/apollo3" "-I{hal.path}/ambiq/mcu/apollo3/hal" "-I{hal.path}/ambiq/mcu/apollo3/regs" "-I{hal.path}/ambiq/utils"
 includes.rtos    = "-I{rtos.path}/kernel/include" "-I{target.path}/rtos/FreeRTOS" "-I{target.path}/rtos/FreeRTOS/portable"
+includes.libraries = "-I{libraries.path}/Servo/src" "-I{libraries.path}/SPI/src" "-I{libraries.path}/Wire/src"
 includes.variant = "-I{build.variant.path}"
-includes.all     = {includes} {includes.core} {includes.cmsis} {includes.hal} {includes.rtos} {includes.variant}
+includes.all     = {includes} {includes.core} {includes.cmsis} {includes.hal} {includes.rtos} {includes.libraries} {includes.variant}
 
 ##################################
 #
@@ -153,18 +155,13 @@ recipe.output.save_file = {build.project_name}.{build.variant}.{build.export_for
 
 
 tools.jlink.cmd=jlink
-tools.jlink.cmd.windows=jlink.exe
-
 tools.jlink.upload.params.verbose=
 tools.jlink.upload.params.quiet=
 tools.jlink.upload.pattern="{cmd}" -device {build.device} "{build.path}/loadscript"
 
-tools.jlink.program.params.verbose=
-tools.jlink.program.params.quiet=
-
 tools.pyocd.cmd=pyocd
-tools.jlink.upload.params.verbose=
-tools.jlink.upload.params.quiet=
+tools.pyocd.upload.params.verbose=
+tools.pyocd.upload.params.quiet=
 tools.pyocd.upload.pattern="{cmd}" flash "{build.path}/{build.project_name}.bin"
 
 debug.executable={build.path}/{build.project_name}.axf
