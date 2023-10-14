@@ -75,6 +75,7 @@ am_hal_uart_state_t;
 
 Uart::Uart(uint32_t module, UartPinMap *pinMap) : mModule(module), mPinMap(pinMap)
 {
+    mUartHandle = NULL;
 }
 
 void Uart::begin(unsigned long baudrate)
@@ -292,7 +293,10 @@ size_t Uart::write(const uint8_t *buffer, size_t size)
 
 Uart::operator bool()
 {
-    return true;
+    if (mUartHandle)
+        return true;
+
+    return false;
 }
 
 void Uart::isr(void)
