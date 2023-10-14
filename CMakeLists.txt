@@ -36,6 +36,7 @@ add_library(arduino STATIC
 target_link_libraries(
     ${APPLICATION}
     PRIVATE
+        variant
         arduino
     PUBLIC
         -T${PROJECT_SOURCE_DIR}/variants/${BOARD}/AMA3B1KK.ld
