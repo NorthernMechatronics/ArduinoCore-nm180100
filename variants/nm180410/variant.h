@@ -47,7 +47,7 @@ extern arduino::nmSPI SPI;
 extern arduino::nmSPI SPI1;
 extern arduino::nmSPI SPI2;
 
-#define WIRE_INTERFACES_COUNT    3
+#define WIRE_INTERFACES_COUNT    4
 
 extern arduino::nmI2C Wire;
 extern arduino::nmI2C Wire1;
