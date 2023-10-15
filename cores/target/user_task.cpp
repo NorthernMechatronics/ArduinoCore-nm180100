@@ -37,6 +37,8 @@
 
 #include <Common.h>
 
+#include <HardwareSerial.h>
+
 static TaskHandle_t user_task_handle;
 
 static void user_task_setup()
@@ -50,11 +52,15 @@ static void user_task(void *parameter)
     while (1)
     {
         loop();
+        if (arduino::serialEventRun)
+        {
+            arduino::serialEventRun();
+        }
         taskYIELD();
     }
 }
 
-void user_task_create(uint32_t priority)
+extern "C" void user_task_create(uint32_t priority)
 {
     xTaskCreate(user_task, "user", 512, 0, priority, &user_task_handle);
 }
