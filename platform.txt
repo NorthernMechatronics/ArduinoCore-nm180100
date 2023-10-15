@@ -17,6 +17,7 @@ nmsdk2.path  = {runtime.platform.path}/cores/nmsdk2
 cmsis.path   = {runtime.platform.path}/cores/nmsdk2/cmsis
 hal.path     = {runtime.platform.path}/cores/nmsdk2/hal
 rtos.path    = {runtime.platform.path}/cores/nmsdk2/rtos/FreeRTOS
+lorawan.path = {runtime.platform.path}/cores/nmsdk2/comms/lorawan/src
 target.path  = {runtime.platform.path}/cores/nmsdk2/targets/nm180100
 libraries.path  = {runtime.platform.path}/libraries
 variant.path = {build.variant.path}
@@ -27,9 +28,10 @@ variant.path = {build.variant.path}
 #
 ##################################
 defines.arduino = -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} -DARDUINO_ARCH_MBED
+defines.lorawan = -DSOFT_SE -DCONTEXT_MANAGEMENT_ENABLED
 defines.variant = 
 defines.extra   = -DAM_PART_APOLLO3 -DAM_PACKAGE_BGA -DPART_apollo3
-defines.all     = {defines.variant} {defines.arduino} {defines.extra}
+defines.all     = {defines.variant} {defines.arduino} {defines.lorawan} {defines.extra}
 
 defines.preproc = {defines.all}
 defines.asm     = {defines.all}
@@ -46,9 +48,10 @@ includes.core    = "-I{cores.path}/arduino/api" "-I{cores.path}/target" "-I{core
 includes.cmsis   = "-I{cmsis.path}/CMSIS_5/CMSIS/Core/Include" "-I{cmsis.path}/CMSIS-DSP/Include" "-I{cmsis.path}/CMSIS-DSP/Include/dsp" "-I{cmsis.path}/CMSIS-NN/Include"
 includes.hal     = "-I{hal.path}/ambiq/CMSIS/AmbiqMicro/Include" "-I{hal.path}/ambiq/mcu/apollo3" "-I{hal.path}/ambiq/mcu/apollo3/hal" "-I{hal.path}/ambiq/mcu/apollo3/regs" "-I{hal.path}/ambiq/utils"
 includes.rtos    = "-I{rtos.path}/kernel/include" "-I{target.path}/rtos/FreeRTOS" "-I{target.path}/rtos/FreeRTOS/portable"
-includes.libraries = "-I{libraries.path}/Servo/src" "-I{libraries.path}/SPI/src" "-I{libraries.path}/Wire/src"
+includes.lorawan = "-I{lorawan.path}/boards" "-I{lorawan.path}/mac" "-I{lorawan.path}/mac/region" "-I{lorawan.path}/radio" "-I{lorawan.path}/radio/sx126x" "-I{lorawan.path}/system" "-I{target.path}/comms/lorawan/src/apps/LoRaMac/common" "-I{target.path}/comms/lorawan/src/apps/LoRaMac/common/LmHandler" "-I{target.path}/comms/lorawan/src/apps/LoRaMac/common/LmHandler/packages" "-I{target.path}/comms/lorawan/src/apps/LoRaMac/common/boards/nm180100"
+includes.libraries = "-I{libraries.path}/Servo/src" "-I{libraries.path}/SPI/src" "-I{libraries.path}/Wire/src" "-I{libraries.path}/LoRaWAN/src" "-I{libraries.path}/LoRaWAN/src/soft-se"
 includes.variant = "-I{build.variant.path}"
-includes.all     = {includes} {includes.core} {includes.cmsis} {includes.hal} {includes.rtos} {includes.libraries} {includes.variant}
+includes.all     = {includes} {includes.core} {includes.cmsis} {includes.hal} {includes.rtos} {includes.lorawan} {includes.libraries} {includes.variant}
 
 ##################################
 #
