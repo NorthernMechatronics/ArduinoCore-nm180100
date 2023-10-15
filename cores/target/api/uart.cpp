@@ -237,22 +237,17 @@ int Uart::read(void)
         .ui32Direction = AM_HAL_UART_READ,
         .pui8Data = (uint8_t *)&ui8Byte,
         .ui32NumBytes = 1,
-        .ui32TimeoutMs = AM_HAL_UART_WAIT_FOREVER,
+        .ui32TimeoutMs = _timeout,
         .pui32BytesTransferred = &ui32BytesRead,
     };
+    am_hal_uart_transfer(mUartHandle, &transfer);
 
-    mTaskHandle = xTaskGetCurrentTaskHandle();
-    do
+    if (ui32BytesRead)
     {
-        am_hal_uart_transfer(mUartHandle, &transfer);
-        if (ui32BytesRead == 0)
-        {
-            xTaskNotifyWait(0, 1, NULL, portMAX_DELAY);
-        }
-    } while (ui32BytesRead == 0);
-    mTaskHandle = 0;
+        return ui8Byte;
+    }
 
-    return ui8Byte;
+    return -1;
 }
 
 void Uart::flush(void)
@@ -274,7 +269,7 @@ size_t Uart::write(const uint8_t *buffer, size_t size)
         .ui32Direction = AM_HAL_UART_WRITE,
         .pui8Data = (uint8_t *)buffer,
         .ui32NumBytes = size,
-        .ui32TimeoutMs = AM_HAL_UART_WAIT_FOREVER,
+        .ui32TimeoutMs = _timeout,
         .pui32BytesTransferred = &ui32BytesWritten,
     };
 
@@ -309,11 +304,4 @@ void Uart::isr(void)
     am_hal_uart_interrupt_status_get(mUartHandle, &ui32Status, true);
     am_hal_uart_interrupt_clear(mUartHandle, ui32Status);
     am_hal_uart_interrupt_service(mUartHandle, ui32Status, &ui32UartIdle);
-
-    if (mTaskHandle)
-    {
-        bContextSwitch = pdFALSE;
-        xTaskNotifyFromISR(mTaskHandle, 0, eNoAction, &bContextSwitch);
-        portEND_SWITCHING_ISR(bContextSwitch);
-    }
 }
