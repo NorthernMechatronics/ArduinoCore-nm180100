@@ -48,10 +48,10 @@ includes.core    = "-I{cores.path}/arduino/api" "-I{cores.path}/target" "-I{core
 includes.cmsis   = "-I{cmsis.path}/CMSIS_5/CMSIS/Core/Include" "-I{cmsis.path}/CMSIS-DSP/Include" "-I{cmsis.path}/CMSIS-DSP/Include/dsp" "-I{cmsis.path}/CMSIS-NN/Include"
 includes.hal     = "-I{hal.path}/ambiq/CMSIS/AmbiqMicro/Include" "-I{hal.path}/ambiq/mcu/apollo3" "-I{hal.path}/ambiq/mcu/apollo3/hal" "-I{hal.path}/ambiq/mcu/apollo3/regs" "-I{hal.path}/ambiq/utils"
 includes.rtos    = "-I{rtos.path}/kernel/include" "-I{target.path}/rtos/FreeRTOS" "-I{target.path}/rtos/FreeRTOS/portable"
-includes.lorawan = "-I{lorawan.path}/boards" "-I{lorawan.path}/mac" "-I{lorawan.path}/mac/region" "-I{lorawan.path}/radio" "-I{lorawan.path}/radio/sx126x" "-I{lorawan.path}/system" "-I{target.path}/comms/lorawan/src/apps/LoRaMac/common" "-I{target.path}/comms/lorawan/src/apps/LoRaMac/common/LmHandler" "-I{target.path}/comms/lorawan/src/apps/LoRaMac/common/LmHandler/packages" "-I{target.path}/comms/lorawan/src/apps/LoRaMac/common/boards/nm180100"
-includes.libraries = "-I{libraries.path}/Servo/src" "-I{libraries.path}/SPI/src" "-I{libraries.path}/Wire/src" "-I{libraries.path}/LoRaWAN/src" "-I{libraries.path}/LoRaWAN/src/soft-se"
+includes.libraries = "-I{libraries.path}/Servo/src" "-I{libraries.path}/SPI/src" "-I{libraries.path}/Wire/src" 
 includes.variant = "-I{build.variant.path}"
-includes.all     = {includes} {includes.core} {includes.cmsis} {includes.hal} {includes.rtos} {includes.lorawan} {includes.libraries} {includes.variant}
+includes.lorawan = "-I{lorawan.path}/boards" "-I{lorawan.path}/mac" "-I{lorawan.path}/mac/region" "-I{lorawan.path}/radio" "-I{lorawan.path}/radio/sx126x" "-I{lorawan.path}/system" "-I{target.path}/comms/lorawan/src/apps/LoRaMac/common" "-I{target.path}/comms/lorawan/src/apps/LoRaMac/common/LmHandler" "-I{target.path}/comms/lorawan/src/apps/LoRaMac/common/LmHandler/packages" "-I{target.path}/comms/lorawan/src/apps/LoRaMac/common/boards/nm180100" "-I{libraries.path}/LoRaWAN/src" "-I{libraries.path}/LoRaWAN/src/soft-se"
+includes.all     = {includes} {includes.core} {includes.cmsis} {includes.hal} {includes.rtos} {includes.libraries} {includes.variant} {includes.lorawan}
 
 ##################################
 #
