@@ -1,4 +1,4 @@
-# Adafruit Capacative Touchscreen Guide
+# Adafruit Color TFT Capacative Touchscreen Guide
 
 This guide will supplement the official guide for using the <a href="https://learn.adafruit.com/adafruit-2-8-and-3-2-color-tft-touchscreen-breakout-v2" target="_blank">Adafruit 2.8" and 3.2" Color TFT Touchscreen Breakout v2</a> with your NM180100 Evaluation Board.
 
