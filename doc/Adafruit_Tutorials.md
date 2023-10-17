@@ -6,7 +6,7 @@ This guide will supplement the official guide for using the <a href="https://lea
 
 ### Hardware
 * NM180100EVB
-* A USB to micro-USB cable to connect the board
+* A USB to micro-USB cable to connect the board to your computer
 * A Linux or Windows machine
 * Hardware to connect the touchscreen to your EVB 
 
@@ -67,7 +67,7 @@ This guide will supplement the official guide for using the <a href="https://lea
 
 ### Hardware
 * NM180100EVB
-* A USB to micro-USB cable to connect the board
+* A USB to micro-USB cable to connect the board to your computer
 * A Linux or Windows machine
 * Some motors to drive!
 
@@ -101,6 +101,24 @@ to connect the servo to pin 4. By default in the examples, the code uses pin 9.
 
 # Adafruit AMG8833 Thermal Camera Sensor
 
-This guide will supplement the official guide for using the <a href="https://learn.adafruit.com/adafruit-motor-shield-v2-for-arduino/overview" target="_blank">Adafruit Motor Shield V2</a> with your NM180100 Evaluation Board.
+This guide will supplement the official guide for using the <a href="https://learn.adafruit.com/adafruit-amg8833-8x8-thermal-camera-sensor/overview" target="_blank">Adafruit AMG8833 8x8 Thermal Camera Sensor</a> with your NM180100 Evaluation Board.
 
-No changes, just follow the tutorial.
+## Requirements
+
+### Hardware
+* NM180100EVB
+* A USB to micro-USB cable to connect the board to your computer
+* A Linux or Windows machine
+* Hardware to connect the sensor to your EVB 
+
+### Software
+* Arduino IDE with NM180100EVB Arduino Core set up. <a href="./doc/NM180100EVB_User_Guide.md" target="_blank">Setup Instructions</a>
+
+## I2C Wiring
+
+|Sensor pin|EVB pin    |
+|----------|-----------|
+|Vin/3.3V  |3V3 or 5V  |
+|GND       |GND (any)  |
+|SCL       |8          |
+|SDA       |9          |
