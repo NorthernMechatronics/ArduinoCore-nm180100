@@ -55,4 +55,4 @@ static I2CPinMap PinMap = {
     },
 };
 
-nmI2C Wire1(1, &PinMap);
+nmI2C Wire1(0, &PinMap);
