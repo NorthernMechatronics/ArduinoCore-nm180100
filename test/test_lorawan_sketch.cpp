@@ -35,6 +35,11 @@
 
 using namespace arduino;
 
+static uint8_t data[2] = { 'h', 'i' };
+
+static uint32_t join_flag = 0;
+static uint32_t transmit_flag = 0;
+
 static void lorawan_on_receive(lorawan_rx_packet_t *packet, lorawan_rx_params_t *params)
 {
 }
@@ -53,12 +58,12 @@ static void lorawan_on_join_request(lorawan_join_params_t *params)
 
 static void lorawan_on_wake(void)
 {
-    digitalWrite(18, LOW);
+//    digitalWrite(18, LOW);
 }
 
 static void lorawan_on_sleep(void)
 {
-    digitalWrite(18, HIGH);
+//    digitalWrite(18, HIGH);
 }
 
 static void lorawan_setup()
@@ -70,13 +75,12 @@ static void lorawan_setup()
 
     lorawan_tracing_set(1);
 
-    lorawan_network_config(LORAWAN_REGION_US915, LORAWAN_DATARATE_0, true, true);
+    lorawan_network_config(LORAWAN_REGION_US915, LORAWAN_DATARATE_2, true, true);
 
     lorawan_activation_config(LORAWAN_ACTIVATION_OTAA, NULL);
     lorawan_key_set_by_str(LORAWAN_KEY_JOIN_EUI, "b4c231a359bc2e3d");
     lorawan_key_set_by_str(LORAWAN_KEY_APP, "01c3f004a2d6efffe32c4eda14bcd2b4");
     lorawan_key_set_by_str(LORAWAN_KEY_NWK, "3f4ca100e2fc675ea123f4eb12c4a012");
-
     lorawan_event_callback_register(LORAWAN_EVENT_RX_DATA,
                                     (lorawan_event_callback_t)lorawan_on_receive);
     lorawan_event_callback_register(LORAWAN_EVENT_JOIN_REQUEST,
@@ -92,11 +96,19 @@ static void lorawan_setup()
     {
         lorawan_class_set(LORAWAN_CLASS_A);
     }
+
+    join_flag = 0;
+    transmit_flag = 0;
 }
 
 static void button0_handler()
 {
-    lorawan_join();
+    join_flag = 1;
+}
+
+static void button1_handler()
+{
+    transmit_flag = 1;
 }
 
 void setup(void)
@@ -106,17 +118,20 @@ void setup(void)
     pinMode(17, OUTPUT);
     pinMode(14, OUTPUT);
     pinMode(15, OUTPUT);
-    pinMode(30, OUTPUT);
-    pinMode(10, OUTPUT);
+    pinMode(34, OUTPUT);
+    pinMode(35, OUTPUT);
 
     digitalWrite(17, LOW);
     digitalWrite(14, LOW);
     digitalWrite(15, LOW);
-    digitalWrite(30, LOW);
-    digitalWrite(10, LOW);
+    digitalWrite(34, LOW);
+    digitalWrite(35, LOW);
 
     pinMode(16, INPUT);
     attachInterrupt(16, button0_handler, FALLING);
+
+    pinMode(13, INPUT);
+    attachInterrupt(13, button1_handler, FALLING);
 
     lorawan_setup();
 }
@@ -125,4 +140,14 @@ void loop(void)
 {
     delay(500);
     digitalToggle(17);
+    if (join_flag)
+    {
+        join_flag = 0;
+        lorawan_join();
+    }
+    if (transmit_flag)
+    {
+        transmit_flag = 0;
+        lorawan_transmit(1, 0, 2, data);
+    }
 }
