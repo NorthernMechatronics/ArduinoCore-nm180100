@@ -1,5 +1,5 @@
 /*
- * BSD 3-Clause License
+ *  BSD 3-Clause License
  *
  * Copyright (c) 2023, Northern Mechatronics, Inc.
  * All rights reserved.
@@ -29,31 +29,25 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "variant.h"
-#include "uart_pinmap.h"
-#include "uart.h"
+#ifndef _UART_PINMAP_H_
+#define _UART_PINMAP_H_
 
-using namespace arduino;
+#include <am_mcu_apollo.h>
 
-static UartPinMap PinMap = {
-    .tx_pin = 22,
-    .rx_pin = 23,
-    .cts_pin = 0,
-    .rts_pin = 0,
-    .tx_pincfg = {
-        .uFuncSel = AM_HAL_PIN_22_UART0TX,
-        .eDriveStrength = AM_HAL_GPIO_PIN_DRIVESTRENGTH_2MA
-    },
-    .rx_pincfg = {
-        .uFuncSel = AM_HAL_PIN_23_UART0RX
-    },
-    .cts_pincfg = { 0 },
-    .rts_pincfg = { 0 },
+namespace arduino {
+
+struct UartPinMap
+{
+    uint32_t tx_pin;
+    uint32_t rx_pin;
+    uint32_t cts_pin;
+    uint32_t rts_pin;
+    am_hal_gpio_pincfg_t tx_pincfg;
+    am_hal_gpio_pincfg_t rx_pincfg;
+    am_hal_gpio_pincfg_t cts_pincfg;
+    am_hal_gpio_pincfg_t rts_pincfg;
 };
 
-Uart Serial(0, &PinMap);
-
-extern "C" void am_uart_isr(void)
-{
-    Serial.isr();
 }
+
+#endif

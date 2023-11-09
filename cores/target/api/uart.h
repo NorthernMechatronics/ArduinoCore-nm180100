@@ -34,15 +34,6 @@
 
 #include <stdint.h>
 
-#include <apollo3.h>
-#include <am_hal_global.h>
-#include <am_hal_queue.h>
-#include <am_hal_status.h>
-#include <am_hal_sysctrl.h>
-
-#include <am_hal_gpio.h>
-#include <am_hal_uart.h>
-
 #include <FreeRTOS.h>
 #include <task.h>
 
@@ -52,17 +43,7 @@ namespace arduino {
 
 #define UART_BUFFER_SIZE    (1024)
 
-struct UartPinMap
-{
-    uint32_t tx_pin;
-    uint32_t rx_pin;
-    uint32_t cts_pin;
-    uint32_t rts_pin;
-    am_hal_gpio_pincfg_t tx_pincfg;
-    am_hal_gpio_pincfg_t rx_pincfg;
-    am_hal_gpio_pincfg_t cts_pincfg;
-    am_hal_gpio_pincfg_t rts_pincfg;
-};
+struct UartPinMap;
 
 class Uart : public HardwareSerial
 {
@@ -90,7 +71,6 @@ protected:
 
 private:
     uint32_t mModule;
-    am_hal_uart_config_t mConfig;
     UartPinMap *mPinMap;
     void *mUartHandle;
     TaskHandle_t mTaskHandle;

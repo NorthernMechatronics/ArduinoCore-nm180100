@@ -32,6 +32,7 @@
 
 #include "ArduinoAPI.h"
 #include "uart.h"
+#include "uart_pinmap.h"
 
 using namespace arduino;
 
@@ -85,80 +86,81 @@ void Uart::begin(unsigned long baudrate)
 
 void Uart::begin(unsigned long baudrate, uint16_t config)
 {
+    am_hal_uart_config_t uart_config;
     uint32_t data, parity, stop;
     data   = config & SERIAL_DATA_MASK;
     parity = config & SERIAL_PARITY_MASK;
     stop   = config & SERIAL_STOP_BIT_MASK;
 
-    mConfig.ui32BaudRate = baudrate;
+    uart_config.ui32BaudRate = baudrate;
     switch (data)
     {
     case SERIAL_DATA_5:
-        mConfig.ui32DataBits = AM_HAL_UART_DATA_BITS_5;
+        uart_config.ui32DataBits = AM_HAL_UART_DATA_BITS_5;
         break;
     case SERIAL_DATA_6:
-        mConfig.ui32DataBits = AM_HAL_UART_DATA_BITS_6;
+        uart_config.ui32DataBits = AM_HAL_UART_DATA_BITS_6;
         break;
     case SERIAL_DATA_7:
-        mConfig.ui32DataBits = AM_HAL_UART_DATA_BITS_7;
+        uart_config.ui32DataBits = AM_HAL_UART_DATA_BITS_7;
         break;
     case SERIAL_DATA_8:
     default:
-        mConfig.ui32DataBits = AM_HAL_UART_DATA_BITS_8;
+        uart_config.ui32DataBits = AM_HAL_UART_DATA_BITS_8;
         break;
     }
 
     switch (parity)
     {
     case SERIAL_PARITY_EVEN:
-        mConfig.ui32Parity = AM_HAL_UART_PARITY_EVEN;
+        uart_config.ui32Parity = AM_HAL_UART_PARITY_EVEN;
         break;
     case SERIAL_PARITY_ODD:
-        mConfig.ui32Parity = AM_HAL_UART_PARITY_ODD;
+        uart_config.ui32Parity = AM_HAL_UART_PARITY_ODD;
         break;
     case SERIAL_PARITY_NONE:
     default:
-        mConfig.ui32Parity = AM_HAL_UART_PARITY_NONE;
+        uart_config.ui32Parity = AM_HAL_UART_PARITY_NONE;
         break;
     }
 
     switch (stop)
     {
     case SERIAL_STOP_BIT_2:
-        mConfig.ui32StopBits = AM_HAL_UART_TWO_STOP_BITS;
+        uart_config.ui32StopBits = AM_HAL_UART_TWO_STOP_BITS;
         break;
     case SERIAL_STOP_BIT_1:
     default:
-        mConfig.ui32StopBits = AM_HAL_UART_ONE_STOP_BIT;
+        uart_config.ui32StopBits = AM_HAL_UART_ONE_STOP_BIT;
         break;
     }
 
     if (mPinMap->cts_pin && mPinMap->rts_pin)
     {
-        mConfig.ui32FlowControl = AM_HAL_UART_FLOW_CTRL_RTS_CTS;
+        uart_config.ui32FlowControl = AM_HAL_UART_FLOW_CTRL_RTS_CTS;
     }
     else if (mPinMap->cts_pin)
     {
-        mConfig.ui32FlowControl = AM_HAL_UART_FLOW_CTRL_CTS_ONLY;
+        uart_config.ui32FlowControl = AM_HAL_UART_FLOW_CTRL_CTS_ONLY;
     }
     else if (mPinMap->rts_pin)
     {
-        mConfig.ui32FlowControl = AM_HAL_UART_FLOW_CTRL_RTS_ONLY;
+        uart_config.ui32FlowControl = AM_HAL_UART_FLOW_CTRL_RTS_ONLY;
     }
     else
     {
-        mConfig.ui32FlowControl = AM_HAL_UART_FLOW_CTRL_NONE;
+        uart_config.ui32FlowControl = AM_HAL_UART_FLOW_CTRL_NONE;
     }
 
-    mConfig.ui32FifoLevels = AM_HAL_UART_TX_FIFO_3_4 | AM_HAL_UART_RX_FIFO_3_4;
-    mConfig.pui8TxBuffer = mTxBuffer;
-    mConfig.ui32TxBufferSize = sizeof(mTxBuffer);
-    mConfig.pui8RxBuffer = mRxBuffer;
-    mConfig.ui32RxBufferSize = sizeof(mRxBuffer);
+    uart_config.ui32FifoLevels = AM_HAL_UART_TX_FIFO_3_4 | AM_HAL_UART_RX_FIFO_3_4;
+    uart_config.pui8TxBuffer = mTxBuffer;
+    uart_config.ui32TxBufferSize = sizeof(mTxBuffer);
+    uart_config.pui8RxBuffer = mRxBuffer;
+    uart_config.ui32RxBufferSize = sizeof(mRxBuffer);
 
     am_hal_uart_initialize(mModule, &mUartHandle);
     am_hal_uart_power_control(mUartHandle, AM_HAL_SYSCTRL_WAKE, false);
-    am_hal_uart_configure(mUartHandle, &mConfig);
+    am_hal_uart_configure(mUartHandle, &uart_config);
 
     am_hal_uart_interrupt_enable(mUartHandle, AM_HAL_UART_INT_RX);
     NVIC_EnableIRQ((IRQn_Type)(UART0_IRQn + mModule));
