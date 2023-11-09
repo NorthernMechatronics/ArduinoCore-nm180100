@@ -30,9 +30,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "variant.h"
+#include "SPI_pinmap.h"
 #include "SPI.h"
-
-#include <am_hal_pin.h>
 
 using namespace arduino;
 

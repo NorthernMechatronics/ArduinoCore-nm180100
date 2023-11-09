@@ -30,10 +30,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "SPI_pinmap.h"
 #include "SPI.h"
-#include "ArduinoAPI.h"
 
-#include <am_hal_pin.h>
+#include "ArduinoAPI.h"
 
 using namespace arduino;
 
@@ -53,29 +53,31 @@ void nmSPI::end()
 
 void nmSPI::beginTransaction(SPISettings settings)
 {
-    mConfig.eInterfaceMode = AM_HAL_IOM_SPI_MODE;
-    mConfig.ui32ClockFreq = settings.getClockFreq();
+    am_hal_iom_config_t iom_config;
+
+    iom_config.eInterfaceMode = AM_HAL_IOM_SPI_MODE;
+    iom_config.ui32ClockFreq = settings.getClockFreq();
     switch (settings.getDataMode())
     {
     case SPI_MODE0:
-        mConfig.eSpiMode = AM_HAL_IOM_SPI_MODE_0;
+        iom_config.eSpiMode = AM_HAL_IOM_SPI_MODE_0;
         break;
     case SPI_MODE1:
-        mConfig.eSpiMode = AM_HAL_IOM_SPI_MODE_1;
+        iom_config.eSpiMode = AM_HAL_IOM_SPI_MODE_1;
         break;
     case SPI_MODE2:
-        mConfig.eSpiMode = AM_HAL_IOM_SPI_MODE_2;
+        iom_config.eSpiMode = AM_HAL_IOM_SPI_MODE_2;
         break;
     case SPI_MODE3:
-        mConfig.eSpiMode = AM_HAL_IOM_SPI_MODE_3;
+        iom_config.eSpiMode = AM_HAL_IOM_SPI_MODE_3;
         break;
     default:
-        mConfig.eSpiMode = AM_HAL_IOM_SPI_MODE_0;
+        iom_config.eSpiMode = AM_HAL_IOM_SPI_MODE_0;
         break;
     }
 
     am_hal_iom_power_ctrl(mIomHandle, AM_HAL_SYSCTRL_WAKE, false);
-    am_hal_iom_configure(mIomHandle, &mConfig);
+    am_hal_iom_configure(mIomHandle, &iom_config);
     am_hal_iom_enable(mIomHandle);
 
     am_hal_gpio_pinconfig(mPinMap->mosi_pin, mPinMap->mosi_pincfg);

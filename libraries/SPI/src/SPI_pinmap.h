@@ -1,5 +1,5 @@
 /*
- * BSD 3-Clause License
+ *  BSD 3-Clause License
  *
  * Copyright (c) 2023, Northern Mechatronics, Inc.
  * All rights reserved.
@@ -29,41 +29,26 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "variant.h"
-#include "SPI_pinmap.h"
-#include "SPI.h"
+#ifndef _SPI_PINMAP_H_
+#define _SPI_PINMAP_H_
 
-using namespace arduino;
+#include <am_mcu_apollo.h>
 
-static SpiPinMap PinMap = {
-    .mosi_pin = 7,
-    .miso_pin = 6,
-    .sck_pin = 5,
-    .nce_pin = 11,
-    .mosi_pincfg = {
-        .uFuncSel            = AM_HAL_PIN_7_M0MOSI,
-        .eDriveStrength      = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA,
-        .uIOMnum             = 0
-    },
-    .miso_pincfg = {
-        .uFuncSel            = AM_HAL_PIN_6_M0MISO,
-        .uIOMnum             = 0
-    },
-    .sck_pincfg = {
-        .uFuncSel            = AM_HAL_PIN_5_M0SCK,
-        .eDriveStrength      = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA,
-        .uIOMnum             = 0
-    },
-    .nce_pincfg = {
-        .uFuncSel            = AM_HAL_PIN_11_NCE11,
-        .eDriveStrength      = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA,
-        .eGPOutcfg           = AM_HAL_GPIO_PIN_OUTCFG_PUSHPULL,
-        .eGPInput            = AM_HAL_GPIO_PIN_INPUT_NONE,
-        .eIntDir             = AM_HAL_GPIO_PIN_INTDIR_LO2HI,
-        .uIOMnum             = 0,
-        .uNCE                = 0,
-        .eCEpol              = AM_HAL_GPIO_PIN_CEPOL_ACTIVELOW
-    },
+namespace arduino {
+
+struct SpiPinMap
+{
+    uint32_t mosi_pin;
+    uint32_t miso_pin;
+    uint32_t sck_pin;
+    uint32_t nce_pin;
+    uint32_t nce_channel;
+    am_hal_gpio_pincfg_t mosi_pincfg;
+    am_hal_gpio_pincfg_t miso_pincfg;
+    am_hal_gpio_pincfg_t sck_pincfg;
+    am_hal_gpio_pincfg_t nce_pincfg;
 };
 
-nmSPI SPI(0, &PinMap);
+}
+
+#endif

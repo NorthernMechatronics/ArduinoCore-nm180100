@@ -34,16 +34,6 @@
 
 #include <stdint.h>
 
-#include <apollo3.h>
-#include <am_hal_cmdq.h>
-#include <am_hal_global.h>
-#include <am_hal_queue.h>
-#include <am_hal_status.h>
-#include <am_hal_sysctrl.h>
-
-#include <am_hal_gpio.h>
-#include <am_hal_iom.h>
-
 #include <FreeRTOS.h>
 #include <semphr.h>
 
@@ -51,18 +41,7 @@
 
 namespace arduino {
 
-struct SpiPinMap
-{
-    uint32_t mosi_pin;
-    uint32_t miso_pin;
-    uint32_t sck_pin;
-    uint32_t nce_pin;
-    uint32_t nce_channel;
-    am_hal_gpio_pincfg_t mosi_pincfg;
-    am_hal_gpio_pincfg_t miso_pincfg;
-    am_hal_gpio_pincfg_t sck_pincfg;
-    am_hal_gpio_pincfg_t nce_pincfg;
-};
+struct SpiPinMap;
 
 class nmSPI : public HardwareSPI
 {
@@ -88,7 +67,6 @@ public:
 
 private:
     uint32_t mModule;
-    am_hal_iom_config_t mConfig;
     SpiPinMap *mPinMap;
     void *mIomHandle;
     SemaphoreHandle_t mMutex;
