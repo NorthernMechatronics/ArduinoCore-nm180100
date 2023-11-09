@@ -29,29 +29,24 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include "variant.h"
-#include "Wire_pinmap.h"
-#include "Wire.h"
+#ifndef _WIRE_PINMAP_H_
+#define _WIRE_PINMAP_H_
 
-using namespace arduino;
+#include <stdint.h>
 
-static I2CPinMap PinMap = {
-    .sda_pin = 6,
-    .sck_pin = 5,
-    .sda_pincfg = {
-        .uFuncSel            = AM_HAL_PIN_6_M0SDAWIR3,
-        .ePullup             = AM_HAL_GPIO_PIN_PULLUP_1_5K,
-        .eDriveStrength      = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA,
-        .eGPOutcfg           = AM_HAL_GPIO_PIN_OUTCFG_OPENDRAIN,
-        .uIOMnum             = 0,
-    },
-    .sck_pincfg = {
-        .uFuncSel            = AM_HAL_PIN_5_M0SCL,
-        .ePullup             = AM_HAL_GPIO_PIN_PULLUP_1_5K,
-        .eDriveStrength      = AM_HAL_GPIO_PIN_DRIVESTRENGTH_12MA,
-        .eGPOutcfg           = AM_HAL_GPIO_PIN_OUTCFG_OPENDRAIN,
-        .uIOMnum             = 0,
-    },
+#include <am_mcu_apollo.h>
+
+namespace arduino
+{
+
+struct I2CPinMap
+{
+    uint32_t sda_pin;
+    uint32_t sck_pin;
+    am_hal_gpio_pincfg_t sda_pincfg;
+    am_hal_gpio_pincfg_t sck_pincfg;
 };
 
-nmI2C Wire1(1, &PinMap);
+} // namespace arduino
+
+#endif

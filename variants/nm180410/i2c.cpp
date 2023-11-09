@@ -30,9 +30,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "variant.h"
+#include "Wire_pinmap.h"
 #include "Wire.h"
-
-#include <am_hal_pin.h>
 
 using namespace arduino;
 

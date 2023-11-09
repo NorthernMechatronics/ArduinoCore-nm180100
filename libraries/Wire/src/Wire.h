@@ -34,32 +34,19 @@
 
 #include <stdint.h>
 
-#include <apollo3.h>
-#include <am_hal_cmdq.h>
-#include <am_hal_global.h>
 #include <am_hal_queue.h>
-#include <am_hal_status.h>
-#include <am_hal_sysctrl.h>
-
-#include <am_hal_gpio.h>
-#include <am_hal_iom.h>
-#include <am_hal_ios.h>
 
 #include <FreeRTOS.h>
 #include <semphr.h>
 
 #include "HardwareI2C.h"
 
+#define IOM_MAX_BUFFER_SIZE (255)
+
 namespace arduino
 {
 
-struct I2CPinMap
-{
-    uint32_t sda_pin;
-    uint32_t sck_pin;
-    am_hal_gpio_pincfg_t sda_pincfg;
-    am_hal_gpio_pincfg_t sck_pincfg;
-};
+struct I2CPinMap;
 
 class nmI2C : public HardwareI2C
 {
@@ -95,17 +82,15 @@ public:
     virtual void isr(void);
 
 protected:
-    uint8_t mTxBuffer[AM_HAL_IOM_MAX_TXNSIZE_I2C];
-    uint8_t mRxBuffer[AM_HAL_IOM_MAX_TXNSIZE_I2C];
-    uint8_t mTransferBuffer[AM_HAL_IOM_MAX_TXNSIZE_I2C];
+    uint8_t mTxBuffer[IOM_MAX_BUFFER_SIZE];
+    uint8_t mRxBuffer[IOM_MAX_BUFFER_SIZE];
+    uint8_t mTransferBuffer[IOM_MAX_BUFFER_SIZE];
 
     am_hal_queue_t mTxQueue;
     am_hal_queue_t mRxQueue;
 
 private:
     uint32_t mModule;
-    am_hal_iom_config_t mIomConfig;
-    am_hal_ios_config_t mIosConfig;
     I2CPinMap *mPinMap;
     void *mIomHandle;
     void *mIosHandle;

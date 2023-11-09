@@ -30,6 +30,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "Wire_pinmap.h"
 #include "Wire.h"
 #include "ArduinoAPI.h"
 
@@ -40,8 +41,8 @@ using namespace arduino;
 nmI2C::nmI2C(uint32_t module, I2CPinMap *pinMap)
   : mModule(module), mPinMap(pinMap)
 {
-    am_hal_queue_init(&mTxQueue, mTxBuffer, 1, AM_HAL_IOM_MAX_TXNSIZE_I2C);
-    am_hal_queue_init(&mRxQueue, mRxBuffer, 1, AM_HAL_IOM_MAX_TXNSIZE_I2C);
+    am_hal_queue_init(&mTxQueue, mTxBuffer, 1, IOM_MAX_BUFFER_SIZE);
+    am_hal_queue_init(&mRxQueue, mRxBuffer, 1, IOM_MAX_BUFFER_SIZE);
     mFrequency = AM_HAL_IOM_100KHZ;
     mReceiveHandler = NULL;
     mRequestHandler = NULL;
@@ -49,12 +50,13 @@ nmI2C::nmI2C(uint32_t module, I2CPinMap *pinMap)
 
 void nmI2C::begin()
 {
+    am_hal_iom_config_t iom_config;
     mAddress = NMI2C_INVALID_ADDRESS;
-    mIomConfig.eInterfaceMode = AM_HAL_IOM_I2C_MODE;
-    mIomConfig.ui32ClockFreq = mFrequency;
+    iom_config.eInterfaceMode = AM_HAL_IOM_I2C_MODE;
+    iom_config.ui32ClockFreq = mFrequency;
     am_hal_iom_initialize(mModule, &mIomHandle);
     am_hal_iom_power_ctrl(mIomHandle, AM_HAL_SYSCTRL_WAKE, false);
-    am_hal_iom_configure(mIomHandle, &mIomConfig);
+    am_hal_iom_configure(mIomHandle, &iom_config);
     am_hal_iom_enable(mIomHandle);
 
     am_hal_gpio_pinconfig(mPinMap->sda_pin, mPinMap->sda_pincfg);
@@ -63,18 +65,19 @@ void nmI2C::begin()
 
 void nmI2C::begin(uint8_t address)
 {
+    am_hal_ios_config_t ios_config;
     mAddress = address;
-    mIosConfig.ui32InterfaceSelect = AM_HAL_IOS_USE_I2C | AM_HAL_IOS_I2C_ADDRESS(mAddress << 1);
-    mIosConfig.ui32ROBase = 0x78;
-    mIosConfig.ui32FIFOBase = 0x80;
-    mIosConfig.ui32RAMBase = 0x100;
-    mIosConfig.ui32FIFOThreshold = 0x40;
-    mIosConfig.pui8SRAMBuffer = mTxBuffer;
-    mIosConfig.ui32SRAMBufferCap = AM_HAL_IOM_MAX_TXNSIZE_I2C;
+    ios_config.ui32InterfaceSelect = AM_HAL_IOS_USE_I2C | AM_HAL_IOS_I2C_ADDRESS(mAddress << 1);
+    ios_config.ui32ROBase = 0x78;
+    ios_config.ui32FIFOBase = 0x80;
+    ios_config.ui32RAMBase = 0x100;
+    ios_config.ui32FIFOThreshold = 0x40;
+    ios_config.pui8SRAMBuffer = mTxBuffer;
+    ios_config.ui32SRAMBufferCap = IOM_MAX_BUFFER_SIZE;
 
     am_hal_ios_initialize(mModule, &mIosHandle);
     am_hal_ios_power_ctrl(&mIosHandle, AM_HAL_SYSCTRL_WAKE, false);
-    am_hal_ios_configure(mIosHandle, &mIosConfig);
+    am_hal_ios_configure(mIosHandle, &ios_config);
 
     am_hal_gpio_pinconfig(mPinMap->sda_pin, mPinMap->sda_pincfg);
     am_hal_gpio_pinconfig(mPinMap->sck_pin, mPinMap->sck_pincfg);
