@@ -38,5 +38,6 @@ target_sources(
     api/wiring_digital.c
     api/wiring_shift.c
 
+    startup_gcc.c
     user_task.cpp
 )
