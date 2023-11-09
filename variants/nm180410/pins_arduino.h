@@ -32,6 +32,8 @@
 #ifndef _PINS_ARDUINO_H_
 #define _PINS_ARDUINO_H_
 
+#include <stdint.h>
+
 #define SCL (8)
 #define SDA (9)
 
@@ -66,5 +68,10 @@
 #define A5  (33)
 #define A6  (34)
 #define A7  (35)
+
+static const uint8_t MOSI = 7;
+static const uint8_t MISO = 6;
+static const uint8_t SCK  = 5;
+static const uint8_t SS   = 4;
 
 #endif
