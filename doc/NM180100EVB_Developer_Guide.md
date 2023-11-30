@@ -38,7 +38,7 @@ There are three main steps to test with the Arduino IDE:
 3. Download the updated package
 
 ###### Package Generation
-To package the Arduino Core, use the followig command at the project root directory:
+To package the Arduino Core, use the following command at the project root directory:
 ```
 extras\release_package.bat <board_variant> <version> <hosting URL>
 ```
