@@ -1,14 +1,14 @@
-add_library(variant)
+add_library(nm180100evb)
 
-set(VARIANT_DIR ${CMAKE_CURRENT_LIST_DIR})
+set(NM180100EVB_DIR ${CMAKE_CURRENT_LIST_DIR})
 
-set(VARIANT_INCLUDES
-    ${VARIANT_DIR}
+set(NM180100EVB_INCLUDES
+    ${NM180100EVB_DIR}
     CACHE PATH "VARIANT includes"
 )
 
 target_include_directories(
-    variant PRIVATE
+    nm180100evb PRIVATE
     ${CORE_INCLUDES}
     ${HAL_INCLUDES}
     ${RTOS_INCLUDES}
@@ -17,7 +17,7 @@ target_include_directories(
 )
 
 target_sources(
-    variant PRIVATE
+    nm180100evb PRIVATE
     main.c
     serial.cpp
     serial1.cpp

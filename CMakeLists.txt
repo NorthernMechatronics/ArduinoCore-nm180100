@@ -8,9 +8,9 @@ option(NM180410 "" OFF)
 
 set(TARGET "nm180100" CACHE STRING "" FORCE)
 if (NM180100EVB)
-    set(BOARD "nm180100evb" CACHE STRING "" FORCE)
+    set(VARIANT "nm180100evb" CACHE STRING "" FORCE)
 elseif (NM180410)
-    set(BOARD "nm180410" CACHE STRING "" FORCE)
+    set(VARIANT "nm180410" CACHE STRING "" FORCE)
 else()
     return()
 endif()
@@ -24,7 +24,8 @@ add_subdirectory(libraries/SPI)
 add_subdirectory(libraries/Wire)
 add_subdirectory(libraries/Servo)
 add_subdirectory(libraries/LoRaWAN)
-add_subdirectory(variants/${BOARD})
+add_subdirectory(variants/nm180100evb)
+add_subdirectory(variants/nm180410)
 
 add_executable(${APPLICATION})
 add_library(arduino STATIC
@@ -41,10 +42,10 @@ add_library(arduino STATIC
 target_link_libraries(
     ${APPLICATION}
     PRIVATE
-        variant
+        ${VARIANT}
         arduino
     PUBLIC
-        -T${PROJECT_SOURCE_DIR}/variants/${BOARD}/AMA3B1KK.ld
+        -T${PROJECT_SOURCE_DIR}/variants/${VARIANT}/AMA3B1KK.ld
         -Wl,--start-group
         -lm
         -lc
@@ -64,7 +65,7 @@ target_include_directories(
     ${HAL_INCLUDES}
     ${RTOS_INCLUDES}
     ${CORE_INCLUDES}
-    ${PROJECT_SOURCE_DIR}/variants/${BOARD}
+    ${PROJECT_SOURCE_DIR}/variants/${VARIANT}
 
     ${SPI_INCLUDES}
     ${WIRE_INCLUDES}
@@ -81,6 +82,13 @@ target_sources(
 )
 
 add_custom_command(
+    TARGET arduino
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:arduino> ${PROJECT_SOURCE_DIR}/variants/nm180100evb/lib/$<TARGET_FILE_NAME:arduino>
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:arduino> ${PROJECT_SOURCE_DIR}/variants/nm180410/lib/$<TARGET_FILE_NAME:arduino>
+)
+
+add_custom_command(
     TARGET ${APPLICATION}
     POST_BUILD
     COMMAND ${CMAKE_OBJCOPY} -Obinary $<TARGET_FILE_NAME:${APPLICATION}> $<TARGET_FILE_NAME:${APPLICATION}>.bin
@@ -88,5 +96,3 @@ add_custom_command(
 
 add_dependencies(arduino hal rtos core spi wire servo lorawan lorawan_l4)
 add_dependencies(${APPLICATION} arduino)
-
-install(TARGETS arduino DESTINATION ${PROJECT_SOURCE_DIR}/variants/${BOARD}/lib)
