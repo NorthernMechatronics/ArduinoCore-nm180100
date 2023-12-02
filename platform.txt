@@ -167,8 +167,12 @@ tools.pyocd.upload.params.verbose=
 tools.pyocd.upload.params.quiet=
 tools.pyocd.upload.pattern="{cmd}" flash "{build.path}/{build.project_name}.bin"
 
+tools.gdb.cmd=arm-none-eabi-gdb
+
 debug.executable={build.path}/{build.project_name}.axf
 debug.toolchain=gcc
-debug.toolchain.prefix=arm-none-eabi-
-debug.server=jlink
-debug.server.jlink.path=JLinkGDBServer
+debug.toolchain.prefix=arm-none-eabi
+
+debug.server.pyocd.cmd=pyocd
+
+debug.server.jlink.cmd=JLinkGDBServerCL

@@ -18,6 +18,8 @@ nm180100evb.upload.tool=jlink
 nm180100evb.upload.protocol=jlink
 
 nm180100evb.debug.tool=gdb
+nm180100evb.debug.server=jlink
+
 
 nm180410.name=NM180410 Petal Development Board
 
@@ -37,3 +39,6 @@ nm180410.build.ldscript={runtime.platform.path}/variants/nm180410/AMA3B1KK.ld
 
 nm180410.upload.tool=pyocd
 nm180410.upload.protocol=pyocd
+
+nm180410.debug.tool=gdb
+nm180410.debug.server=pyocd
