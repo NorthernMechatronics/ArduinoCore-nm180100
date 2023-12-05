@@ -111,6 +111,22 @@ Python is usually pre-installed in Linux. If not, you can run the following comm
 
 </details>
 
+---
+
+### Install pyOCD
+
+<details>
+<summary>Windows/Linux</summary>
+
+1. To install the latest version, execute the following in a command prompt:
+
+`python -mpip install --pre -U git+https://github.com/pyocd/pyOCD.git`
+
+2. This will install pyOCD under the Python Scripts directory.  Ensure that this directory is added to your PATH.
+
+</details>
+
+
 </details>
 
 ---
