@@ -27,7 +27,9 @@ target_sources(
     ${CORE_DIR}/api/WString.cpp
 
     api/ctimer.c
+    api/dtostrf.c
     api/interrupts.c
+    api/itoa.c
     api/pulse.cpp
     api/random.cpp
     api/time.c
