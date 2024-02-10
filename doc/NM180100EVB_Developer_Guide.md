@@ -40,12 +40,12 @@ There are three main steps to test with the Arduino IDE:
 ###### Package Generation
 To package the Arduino Core, use the following command at the project root directory:
 ```
-extras\release_package.bat <board_variant> <version> <hosting URL>
+extras\release_package.bat <version> <hosting URL>
 ```
 
 For example, to generate the package for the EVB with version 0.9.10 and hosting it locally use
 ```
-extras\release_package.bat nm180100evb 0.9.10 http://localhost:8080
+extras\release_package.bat 0.9.10 http://localhost:8080
 ```
 This will create a staging directory containing a json file and an archive containing the Arduino Core package. 
 
@@ -65,7 +65,7 @@ python -m http.server 8080
 
 3. Enter the following in the Additional boards manager URLs field:
 ```
-http://localhost:8080/package_nm180100evb.json
+http://localhost:8080/package_nm180100_index.json
 ```
 ![ARDUINO_IDE_BOARD_URL](./res/arduino_ide_board_url.png)
 
@@ -74,9 +74,9 @@ http://localhost:8080/package_nm180100evb.json
 
 The BOARDS MANAGER panel opens up.
 
-5. Type the board variant in the search box for the board of interest.  For example,
+5. Type nm180100 in the search box for the architecture:
 ```
-nm180100evb
+nm180100
 ```
 ![ARDUINO_IDE_BOARD_SELECTION](./res/arduino_ide_board_selection.png)
 

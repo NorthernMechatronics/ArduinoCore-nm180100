@@ -1,12 +1,12 @@
-# NM180100EVB Setup Guide for Arduino IDE
+# NM180100 Development Platform Setup Guide for Arduino IDE
 
-This guide will walk you through how to get up and running with the NM180100EVB in the Arduino IDE.
+This guide will walk you through how to get up and running with the NM180100 Boards in the Arduino IDE.
 
 ## Requirements
 
 ### Hardware
 
-- NM180100EVB
+- NM180100EVB or NM180410
 - A USB to micro-USB cable to connect the board
 - A Linux or Windows machine
 
@@ -23,7 +23,7 @@ This guide will walk you through how to get up and running with the NM180100EVB 
 
 ### Install Arduino IDE
 
-The Arduino IDE is where you will write the code that will run on the NM180100EVB.
+The Arduino IDE is where you will write the code that will run on the NM180100.
 
 [Download Arduino IDE](https://www.arduino.cc/en/software)
 
@@ -70,7 +70,7 @@ The ARM GNU Toolchain is used for compiling and building.
 
 ### Install SEGGER J-Link
 
-SEGGER J-Link is used to program and debug the NM180100EVB board.
+SEGGER J-Link is used to program and debug the NM180100.
 
 [Download J-Link Software and Documentation Pack](https://www.segger.com/downloads/jlink/#J-LinkSoftwareAndDocumentationPack)
 
@@ -133,7 +133,7 @@ Python is usually pre-installed in Linux. If not, you can run the following comm
 
 ## Install the NM180100 Arduino Core
 
-To get your code to run on the NM180100EVB, you need to install the corresponding Arduino Core.
+To get your code to run on the NM180100, you need to install the corresponding Arduino Core.
 
 1. Open the [Releases Section](https://github.com/NorthernMechatronics/ArduinoCore-nm180100/releases) of the NM180100 Arduino Core github page.
 
@@ -157,13 +157,13 @@ To get your code to run on the NM180100EVB, you need to install the correspondin
 
 ![Board select icon location](./res/board_select_navigation.png)
 
-9. In the search bar, type in NM180100EVB, and the board should appear.
+9. In the search bar, type in NM180100, and the board should appear.
 
 ![Board search results](./res/board_search_results.png)
 
 10. Click <b>INSTALL</b>
 
-11. Now, select the board in the menu by clicking on Tools > Board > nm180100evb > NM180100 Evaluation Board.
+11. Now, select your board.  For example, if you have an NM180100EVB, click the Tools menu > Board > Northern Mechatronics NM180100 Boards > NM180100 Evaluation Board.
 
 ![Board select menu traversal](./res/board_select_menu_traverse.png)
 
@@ -171,7 +171,7 @@ To get your code to run on the NM180100EVB, you need to install the correspondin
 
 ## You're All Set!
 
-And that's it! You are now ready to start writing code and running it on your NM180100EVB.
+And that's it! You are now ready to start writing code and running it on your NM180100 board.
 
 ---
 
