@@ -40,7 +40,7 @@ static am_hal_gpio_pincfg_t device_button_pincfg = {
     .uFuncSel            = 3,
     .eDriveStrength      = AM_HAL_GPIO_PIN_DRIVESTRENGTH_2MA,
     .eGPInput            = AM_HAL_GPIO_PIN_INPUT_ENABLE,
-    .eIntDir             = AM_HAL_GPIO_PIN_INTDIR_LO2HI
+    .eIntDir             = AM_HAL_GPIO_PIN_INTDIR_HI2LO
 };
 
 void device_button_initialize(uint32_t button_gpio)
