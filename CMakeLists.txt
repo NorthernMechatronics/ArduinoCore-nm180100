@@ -20,6 +20,7 @@ option(RAT_LORAWAN_ENABLE "" ON)
 project(${APPLICATION})
 
 add_subdirectory(cores)
+add_subdirectory(libraries/Button)
 add_subdirectory(libraries/SPI)
 add_subdirectory(libraries/Wire)
 add_subdirectory(libraries/Servo)
@@ -32,6 +33,7 @@ add_library(arduino STATIC
     $<TARGET_OBJECTS:hal>
     $<TARGET_OBJECTS:rtos>
     $<TARGET_OBJECTS:core>
+    $<TARGET_OBJECTS:button>
     $<TARGET_OBJECTS:spi>
     $<TARGET_OBJECTS:wire>
     $<TARGET_OBJECTS:servo>
@@ -67,6 +69,7 @@ target_include_directories(
     ${CORE_INCLUDES}
     ${PROJECT_SOURCE_DIR}/variants/${VARIANT}
 
+    ${BUTTON_INCLUDES}
     ${SPI_INCLUDES}
     ${WIRE_INCLUDES}
     ${SERVO_INCLUDES}
@@ -77,7 +80,7 @@ target_include_directories(
 target_sources(
     ${APPLICATION}
     PRIVATE
-    ${PROJECT_SOURCE_DIR}/test/test_sketch.cpp
+    ${PROJECT_SOURCE_DIR}/test/test_lorawan_sketch.cpp
     ${PROJECT_SOURCE_DIR}/cores/arduino/stub.c
 )
 
@@ -94,5 +97,5 @@ add_custom_command(
     COMMAND ${CMAKE_OBJCOPY} -Obinary $<TARGET_FILE_NAME:${APPLICATION}> $<TARGET_FILE_NAME:${APPLICATION}>.bin
 )
 
-add_dependencies(arduino hal rtos core spi wire servo lorawan lorawan_l4)
+add_dependencies(arduino hal rtos core button spi wire servo lorawan lorawan_l4)
 add_dependencies(${APPLICATION} arduino)
